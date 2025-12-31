@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.marketing.SalesBiddingMapper">
+
+    <!-- 分页列表，支持分页查询和高级查询 -->
+    <select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.marketing.SalesBiddingPageListVO"
+            parameterType="map">
+        SELECT
+        t_sales_bidding.id,
+        t_sales_bidding.bidding_no AS biddingNo,
+        t_sales_bidding.materiel_no AS materielNo,
+        t_sales_bidding.materiel_name AS materielName,
+        t_sales_bidding.bidding_mode AS biddingMode,
+        t_sales_bidding.area_no AS areaNo,
+        t_sales_bidding.area_name AS areaName,
+        t_sales_bidding.delivery_place_no AS deliveryPlaceNo,
+        t_sales_bidding.delivery_place_name AS deliveryPlaceName,
+        t_sales_bidding.delivery_place_class_no AS deliveryPlaceClassNo,
+        t_sales_bidding.delivery_place_class_name AS deliveryPlaceClassName,
+        t_sales_bidding.delivery_method AS deliveryMethod,
+        t_sales_bidding.shipping_type AS shippingType,
+        t_sales_bidding.low_price AS lowPrice,
+        t_sales_bidding.sign_up_end_time AS signUpEndTime,
+        t_sales_bidding.starting_time AS startingTime,
+        t_sales_bidding.bidding_duration AS biddingDuration,
+        t_sales_bidding.status AS status,
+        t_sales_bidding.enable_status AS enableStatus,
+        t_sales_bidding.workflowid AS workflowid,
+        t_sales_bidding.delay_duration AS delayDuration,
+        t_sales_bidding.org_no AS orgNo,
+        t_sales_bidding.workflowid AS workflowid,
+        t_sales_bidding.company_no AS companyNo,
+        t_sales_bidding.tender_number AS tenderNumber,
+        t_sales_bidding.depot_no AS depotNo,
+        t_sales_bidding.depot_name AS depotName,
+        t_sales_bidding.order_bidding_no AS orderBiddingNo
+        FROM
+        t_sales_bidding
+        WHERE
+        t_sales_bidding.is_deleted = #{param.deleted}
+        <if test="param.orgNoList != null and param.orgNoList != ''">
+            AND t_sales_bidding.org_no IN
+            <foreach item="item" index="index" collection="param.orgNoList"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="param.userName != null and param.userName != ''">
+            AND t_system_user.user_name LIKE CONCAT('%', #{param.userName}, '%')
+        </if>
+        <if test="param.orgNo != null and param.orgNo != ''">
+            AND t_sales_bidding.org_no LIKE CONCAT('%', #{param.orgNo}, '%')
+        </if>
+        <if test="param.materielNo != null and param.materielNo != ''">
+            AND t_sales_bidding.materiel_no LIKE CONCAT('%', #{param.materielNo}, '%')
+        </if>
+        <if test="param.materielName != null and param.materielName != ''">
+            AND t_sales_bidding.materiel_name LIKE CONCAT('%', #{param.materielName}, '%')
+        </if>
+        <if test="param.biddingMode != null and param.biddingMode != ''">
+            AND t_sales_bidding.bidding_mode LIKE CONCAT('%', #{param.biddingMode}, '%')
+        </if>
+        <if test="param.areaNo != null and param.areaNo != ''">
+            AND t_sales_bidding.area_no LIKE CONCAT('%', #{param.areaNo}, '%')
+        </if>
+        <if test="param.areaName != null and param.areaName != ''">
+            AND t_sales_bidding.area_name LIKE CONCAT('%', #{param.areaName}, '%')
+        </if>
+        <if test="param.deliveryPlaceNo != null and param.deliveryPlaceNo != ''">
+            AND t_sales_bidding.delivery_place_no LIKE CONCAT('%', #{param.adeliveryPlaceNo}, '%')
+        </if>
+        <if test="param.deliveryPlaceClassName != null and param.deliveryPlaceClassName != ''">
+            AND t_sales_bidding.delivery_place_name LIKE CONCAT('%', #{param.deliveryPlaceClassName}, '%')
+        </if>
+        <if test="param.deliveryPlaceClassNo != null and param.deliveryPlaceClassNo != ''">
+            AND t_sales_bidding.delivery_place_class_no LIKE CONCAT('%', #{param.deliveryPlaceClassNo}, '%')
+        </if>
+        <if test="param.deliveryPlaceClassName != null and param.deliveryPlaceClassName != ''">
+            AND t_sales_bidding.delivery_place_class_name LIKE CONCAT('%', #{param.deliveryPlaceClassName}, '%')
+        </if>
+        <if test="param.deliveryMethod != null and param.deliveryMethod != ''">
+            AND t_sales_bidding.delivery_method LIKE CONCAT('%', #{param.deliveryMethod}, '%')
+        </if>
+        <if test="param.shippingType != null and param.shippingType != ''">
+            AND t_sales_bidding.shipping_type LIKE CONCAT('%', #{param.shippingType}, '%')
+        </if>
+        <if test="param.lowPrice != null and param.lowPrice != ''">
+            AND t_sales_bidding.low_price LIKE CONCAT('%', #{param.lowPrice}, '%')
+        </if>
+        <if test="param.signUpEndTime != null and param.signUpEndTime != ''">
+            AND t_sales_bidding.sign_up_end_time LIKE CONCAT('%', #{param.signUpEndTime}, '%')
+        </if>
+        <if test="param.startingTime != null and param.startingTime != ''">
+            AND t_sales_bidding.starting_time LIKE CONCAT('%', #{param.startingTime}, '%')
+        </if>
+        <if test="param.biddingDuration != null and param.biddingDuration != ''">
+            AND t_sales_bidding.bidding_duration LIKE CONCAT('%', #{param.biddingDuration}, '%')
+        </if>
+        <if test="param.status != null and param.status != ''">
+            AND t_sales_bidding.status LIKE CONCAT('%', #{param.status}, '%')
+        </if>
+        <if test="param.enableStatus != null and param.enableStatus != ''">
+            AND t_sales_bidding.enable_status LIKE CONCAT('%', #{param.enableStatus}, '%')
+        </if>
+        ORDER BY
+        t_sales_bidding.gmt_create DESC
+    </select>
+
+    <select id="biddingNoCount" resultType="java.lang.Long">
+        SELECT COUNT(t_sales_bidding.bidding_no)
+        FROM t_sales_bidding
+        WHERE t_sales_bidding.is_deleted = 0
+          AND t_sales_bidding.user_name = #{userName}
+          AND t_sales_bidding.org_no = #{orgNo}
+    </select>
+
+    <update id="serialNumber">
+        UPDATE t_sales_bidding
+        SET t_sales_bidding.serial_number = #{serialNumber}
+    </update>
+
+    <update id="biddingStatus">
+        UPDATE t_sales_bidding
+        SET t_sales_bidding.shbz   = #{param.approvalStatus},
+            t_sales_bidding.status = '审核完成'
+        WHERE t_sales_bidding.id = #{param.id}
+    </update>
+
+    <select id="orgNoAbbreviation" resultType="java.lang.String">
+        select t_system_org.org_no_abbreviation
+        from t_system_org
+        where t_system_org.org_no = #{orgNo}
+    </select>
+
+    <select id="selectOrgNo" resultType="java.lang.String">
+        SELECT t_system_org.org_no
+        FROM t_system_org
+        WHERE t_system_org.id =
+              (SELECT t_system_org.parent_id
+               FROM t_system_org
+               WHERE t_system_org.org_no = #{orgNo})
+    </select>
+
+    <select id="selectOrgName" resultType="java.lang.String">
+        SELECT t_system_org.org_name
+        FROM t_system_org
+        WHERE t_system_org.org_no = #{orgNo}
+    </select>
+
+    <select id="selectCustomer" resultType="java.lang.Long">
+        SELECT count(t_apply_bidding.customer)
+        FROM t_apply_bidding
+        WHERE t_apply_bidding.tender_number = #{tenderNumber}
+    </select>
+
+    <select id="selDeliveryWarehouseName" resultType="java.lang.String">
+        SELECT t_depot.depot_name AS depotName
+        FROM t_depot
+        WHERE t_depot.depot_no = #{depotNo}
+    </select>
+</mapper>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.marketing.OrderBiddingMapper">
+
+    <!-- 根据id查询数据 -->
+    <select id="metadata" resultType="com.ccit.area.sales.dao.vo.marketing.OrderBiddingPageListVO" parameterType="map">
+        SELECT t_price_bidding.id,
+               t_price_bidding.tender_number        AS tenderNumber,
+               t_price_bidding.customer             AS customer,
+               t_price_bidding.latest_quotation     AS latestQuotation,
+               t_price_bidding.quantity             AS quantity,
+               t_price_bidding.quotation_time       AS quotationTime,
+               t_price_bidding.win_bid_status       AS winBidStatus
+        FROM t_price_bidding
+                 LEFT JOIN
+             t_sales_bidding
+             ON
+                 t_price_bidding.tender_number = t_sales_bidding.tender_number
+        WHERE t_price_bidding.is_deleted = '0'
+          AND t_price_bidding.latest_quotation != '0'
+        AND t_price_bidding.quantity != '0'
+        AND t_price_bidding.tender_number =#{tenderNumber}
+        AND t_price_bidding.win_bid_status ='已中标'
+        ORDER BY
+            t_price_bidding.gmt_create ASC
+    </select>
+
+    <!-- 根据id查询数据 -->
+    <select id="metaCreate" resultType="com.ccit.area.sales.dao.vo.marketing.ProcessOperationPageListVO"
+            parameterType="map">
+        SELECT t_process_operation.technological_process AS technologicalProcess,
+               t_process_operation.operator_name         AS operatorName,
+               t_process_operation.operator_time         AS operatorTime,
+               t_process_operation.operation             AS operation
+        FROM t_process_operation
+        WHERE t_process_operation.is_deleted = 0
+          AND t_process_operation.order_number = #{biddingNo}
+    </select>
+
+    <!-- 根据id查询数据 -->
+    <select id="countCreate" resultType="Integer" parameterType="map">
+        SELECT count(t_price_bidding.customer)
+        FROM t_price_bidding
+        WHERE t_price_bidding.is_deleted = '0'
+          AND t_price_bidding.tender_number = #{tenderNumber}
+          AND t_price_bidding.win_bid_status = '已中标'
+    </select>
+
+    <!-- 根据id查询数据 -->
+    <select id="participationCreate" resultType="com.ccit.area.sales.dao.vo.marketing.OrderBiddingPageListVO"
+            parameterType="map">
+        SELECT t_apply_bidding.customer
+        FROM t_apply_bidding
+        WHERE t_apply_bidding.is_deleted = '0'
+          AND t_apply_bidding.tender_number = #{tenderNumber}
+        GROUP BY t_apply_bidding.customer
+    </select>
+
+    <!-- 根据id查询数据 -->
+    <select id="ascCreate" resultType="com.ccit.area.sales.dao.vo.marketing.OrderBiddingPageListVO" parameterType="map">
+        SELECT t_price_bidding.customer             AS customer,
+               t_price_bidding.quantity AS transactionQuantity
+        FROM t_price_bidding
+        WHERE t_price_bidding.is_deleted = '0'
+          AND t_price_bidding.tender_number = #{tenderNumber}
+          AND t_price_bidding.win_bid_status = '已中标'
+    </select>
+
+    <!-- 根据id查询数据 -->
+    <select id="bidDetails" resultType="com.ccit.area.sales.dao.vo.marketing.OrderBiddingPageListVO"
+            parameterType="map">
+        SELECT t_price_bidding.latest_quotation    AS transactionPrice,
+               t_price_bidding.quantity AS transactionQuantity,
+               t_price_bidding.quotation_time       AS quotationTime
+        FROM t_price_bidding
+        WHERE t_price_bidding.is_deleted = '0'
+          AND t_price_bidding.tender_number = #{tenderNumber}
+          AND t_price_bidding.win_bid_status = '已中标'
+    </select>
+
+    <!-- 根据id查询数据 -->
+    <select id="orderLine" resultType="com.ccit.area.sales.dao.vo.marketing.OrderBiddingOrderLineVO"
+            parameterType="map">
+        SELECT t_apply_bidding.id,
+               t_sales_bidding.bidding_no           AS biddingNo,
+               t_apply_bidding.customer             AS customer,
+               t_apply_bidding.regional_name        AS regionalName,
+               t_sales_bidding.brand_name           AS brandName,
+               t_apply_bidding.latest_quotation     AS latestQuotation,
+               t_apply_bidding.transaction_price    AS transactionPrice,
+               t_apply_bidding.quantity             AS quantity,
+               t_apply_bidding.transaction_quantity AS transactionQuantity,
+               t_sales_bidding.delivery_warehouse   AS deliveryWarehouse,
+               t_apply_bidding.quotation_time       AS quotationTime,
+               t_sales_bidding.delivery_Method      AS deliveryMethod,
+               t_sales_bidding.shipping_type        AS shippingType,
+               t_sales_bidding.payment_method       AS paymentMethod
+        FROM t_apply_bidding
+                 LEFT JOIN t_sales_bidding
+                           ON t_apply_bidding.tender_number = t_sales_bidding.tender_number
+        WHERE t_apply_bidding.is_deleted = 0
+          AND t_sales_bidding.is_deleted = 0
+          AND t_apply_bidding.win_bid_status = '已中标'
+          AND t_sales_bidding.order_bidding_no = 1
+          AND t_apply_bidding.tender_number = #{tenderNumber}
+    </select>
+
+    <insert id="insertOrderLine">
+        INSERT INTO t_order_line (order_no, order_line_no, listed_no, status, customer_name, order_type,
+        order_submission_price,
+        transaction_price, order_submission_quantity, turnover_quantity, gmt_create, gmt_modified)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.orderNo}, #{item.orderLineNo}, #{item.biddingNo}, #{item.status}, #{item.customer},
+            #{item.orderType},
+            #{item.latestQuotation}, #{item.transactionPrice}, #{item.quantity}, #{item.transactionQuantity},
+            #{item.gmtCreate}, #{item.gmtModified})
+        </foreach>
+    </insert>
+
+    <select id="orgNoAbbreviation" resultType="java.lang.String">
+        select t_system_org.org_no_abbreviation
+        from t_system_org
+        where t_system_org.org_no = #{orgNo}
+    </select>
+
+    <select id="selectOrgNo" resultType="java.lang.String">
+        select t_system_org.org_no
+        from t_system_user
+                 join t_system_user_org on t_system_user_org.user_id = t_system_user.id
+                 join t_system_org on t_system_org.id = t_system_user_org.org_id
+        where t_system_user_org.display_status = '1'
+          and t_system_user.user_name = #{userName}
+    </select>
+
+    <update id="biddingStatus">
+        UPDATE t_sales_bidding
+        SET t_sales_bidding.status = '审核完成'
+        WHERE t_sales_bidding.id = #{id}
+    </update>
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.marketing.PriceBiddingMapper">
+    <insert id="addApplyBidding">
+        insert into t_price_bidding(tender_number, customer_id, customer, customer_ip, materiel_no,
+                                    materiel_name, initial_quotation, latest_quotation, quotation_time, quantity,
+                                    mark_up, create_by, create_by_name, update_by, update_by_name,company_no,company_name)
+        values (#{tenderNumber}, #{customerId}, #{customer}, #{customerIp}, #{materielNo}, #{materielName},
+                #{initialQuotation}, #{latestQuotation}, #{quotationTime}, #{quantity}, #{markUp},
+                #{createBy}, #{createByName}, #{updateBy}, #{updateByName},#{companyNo},#{companyName})
+    </insert>
+
+    <select id="selectBidding" resultType="com.ccit.area.sales.dao.vo.marketing.SalesBiddingPageListVO"
+            parameterType="map">
+        SELECT t_sales_bidding.id,
+               t_sales_bidding.materiel_no               AS materielNo,
+               t_sales_bidding.materiel_name             AS materielName,
+               t_sales_bidding.bidding_mode              AS biddingMode,
+               t_sales_bidding.area_no                   AS areano,
+               t_sales_bidding.area_name                 AS areaname,
+               t_sales_bidding.delivery_place_no         AS deliveryPlaceNo,
+               t_sales_bidding.delivery_place_name       AS deliveryPlaceName,
+               t_sales_bidding.delivery_place_class_no   AS deliveryPlaceClassNo,
+               t_sales_bidding.delivery_place_class_name AS deliveryPlaceClassName,
+               t_sales_bidding.delivery_method           AS deliveryMethod,
+               t_sales_bidding.shipping_type             AS shippingType,
+               t_sales_bidding.low_price                 AS lowPrice,
+               t_sales_bidding.starting_time             AS startingTime,
+               t_sales_bidding.bidding_duration          AS biddingDuration,
+               t_sales_bidding.delay_duration            AS delayDuration,
+               t_sales_bidding.sign_up_end_time          AS signUpEndTime,
+               t_sales_bidding.quantity                  AS quantity,
+               t_sales_bidding.min_markup                AS minMarkup,
+               t_sales_bidding.distance_end_duration     AS distanceEndDuration
+        FROM t_sales_bidding
+        WHERE t_sales_bidding.tender_number = #{tenderNumber}
+    </select>
+
+
+    <select id="selectMax" resultType="java.lang.String">
+        SELECT COUNT(t_price_bidding.id)
+        FROM t_price_bidding
+        WHERE t_price_bidding.tender_number = #{tenderNumber}
+    </select>
+
+    <select id="selectQuote" resultType="java.math.BigDecimal">
+        SELECT t_price_bidding.latest_quotation
+        FROM t_price_bidding
+        WHERE t_price_bidding.tender_number = #{tenderNumber}
+    </select>
+
+    <select id="selectDelayFrequency" resultType="java.lang.String">
+        SELECT t_sales_bidding.delay_frequency AS delayFrequency
+        FROM t_sales_bidding
+        WHERE t_sales_bidding.tender_number = #{tenderNumber}
+    </select>
+
+    <update id="updateBidding">
+        UPDATE t_sales_bidding
+        SET t_sales_bidding.bidding_duration = #{biddingDuration},
+            t_sales_bidding.delay_frequency  = #{delayFrequency}
+        WHERE t_sales_bidding.tender_number = #{tenderNumber}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE t_price_bidding
+        SET t_price_bidding.status = #{entity.status}
+        WHERE t_price_bidding.id = #{entity.id}
+    </update>
+</mapper>

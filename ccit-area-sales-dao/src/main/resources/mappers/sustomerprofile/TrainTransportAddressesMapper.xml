@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.customerprofile.TrainTransportAddressesMapper">
+
+    <select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.customer.TTrainTransportAddresseVO">
+        select
+        id,
+        customer_name,
+        receiver_person,
+        phone_number,
+        transport_method,
+        dedicated,
+        railway_station,
+        status
+        FROM t_train_transport_addresses
+        <where>
+            is_deleted = #{param.is_deleted}
+            <if test="param.customerName != null and param.customerName != ''">
+                AND customer_name LIKE CONCAT('%', #{param.customerName}, '%')
+            </if>
+            <if test="param.receiverPerson !=null and param.receiverPerson !=''">
+                AND receiver_person LIKE CONCAT('%', #{param.receiverPerson}, '%')
+            </if>
+            <if test="param.phoneNumber != null and param.phoneNumber != ''">
+                AND phone_number LIKE CONCAT('%', #{param.phoneNumber}, '%')
+            </if>
+            <if test="param.transportMethod != null and param.transportMethod != ''">
+                AND transport_method LIKE CONCAT('%', #{param.transportMethod}, '%')
+            </if>
+            <if test="param.dedicated != null and param.dedicated != ''">
+                AND dedicated LIKE CONCAT('%', #{param.dedicated}, '%')
+            </if>
+            <if test="param.railwayStation != null and param.railwayStation != ''">
+                AND railway_station LIKE CONCAT('%', #{param.railwayStation}, '%')
+            </if>
+            <if test="param.status != null and param.status != ''">
+                AND status LIKE CONCAT('%', #{param.status}, '%')
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,21 @@
+spring:
+  cloud:
+    nacos:
+      username: ccit_area_sales
+      password: dQ4U0qtJwr0Tsn1v4etYN3YD
+      discovery:
+        metadata:
+          management:
+            context-path: ${server.servlet.context-path}/actuator
+        server-addr: 127.0.0.1:9959
+        namespace: 63c938b0-ad83-4fb1-b640-16bf4e745183
+        group: DEFAULT_GROUP
+      config:
+        server-addr: 127.0.0.1:9959
+        namespace: 63c938b0-ad83-4fb1-b640-16bf4e745183
+        group: DEFAULT_GROUP
+        file-extension: yml
+        extension-configs:
+          - data-id: ccit-area-sales-local.yml
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true

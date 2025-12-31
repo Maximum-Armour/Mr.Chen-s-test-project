@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.dingding.ApproverInformationMapper">
+
+    <select id="getApproverDetail" resultType="com.ccit.area.sales.dao.dingding.vo.TApproverInformationVO">
+        select user_name, user_code,dingding_code, approver_id, approver_status,task_id,task_id_status,create_time
+        from t_approver_information
+        <where>
+            and approver_status = 'SPZ'
+            and task_id_status = 0
+            <if test="entity.userCode != null and entity.userCode != ''">
+                and user_code = #{entity.userCode}
+            </if>
+        </where>
+    </select>
+
+    <select id="getProcessedApproveDetail" resultType="com.ccit.area.sales.dao.dingding.vo.TApproverInformationVO">
+        select user_name, user_code,dingding_code, approver_id, approver_status,task_id,task_id_status,create_time
+        from t_approver_information
+        <where>
+            and task_id_status = 1
+            <if test="entity.userCode != null and entity.userCode != ''">
+                and user_code = #{entity.userCode}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateStatus" parameterType="com.ccit.area.sales.dao.dingding.po.RabbitApprovalRequest">
+        update ${entity.databaseName}
+        set shbz = #{entity.approvalStatus},
+        <if test="entity.workflowId != null and entity.workflowId != ''">
+            workflowid = #{entity.workflowId},
+        </if>
+        status = #{entity.status}
+        where id = #{entity.id}
+    </update>
+
+    <update id="updateApprovalStatus" parameterType="com.ccit.area.sales.dao.dingding.po.RabbitApprovalRequest">
+        update t_sales_bidding
+        set
+        <if test="entity.workflowId != null and entity.workflowId != ''">
+            workflowid = #{entity.workflowId},
+        </if>
+        shbz = #{entity.approvalStatus},
+        order_bidding_no = #{entity.status}
+        where id = #{entity.id}
+    </update>
+
+    <update id="updateOrderApprovalStatus"
+            parameterType="com.ccit.area.sales.dao.dingding.po.RabbitApprovalRequest">
+        update t_order_line
+            set
+            <if test="entity.workflowId != null and entity.workflowId != ''">
+                workflowid = #{entity.workflowId},
+            </if>
+            <if test="entity.approvalStatus == 'YTG'">
+                order_approval_time = CURRENT_TIMESTAMP,
+            </if>
+            shbz = #{entity.approvalStatus},
+            status = #{entity.status}
+        where id = #{entity.id}
+    </update>
+
+
+</mapper>

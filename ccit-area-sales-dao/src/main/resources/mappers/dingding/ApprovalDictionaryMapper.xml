@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.dingding.ApprovalDictionaryMapper">
+
+    <update id="updateApprovalDictionary"
+            parameterType="com.ccit.area.sales.dao.dingding.dto.TApprovalDictionaryDTO">
+        update t_approval_dictionary
+        <set>
+            <if test="entity.business != null and entity.business != ''">
+                business = #{entity.business},
+            </if>
+            <if test="entity.businessCode != null and entity.businessCode != ''">
+                business_code = #{entity.businessCode},
+            </if>
+            <if test="entity.databaseName != null and entity.databaseName != ''">
+                database_name = #{entity.databaseName},
+            </if>
+            <if test="entity.dictionary != null and entity.dictionary != ''">
+                dictionary = #{entity.dictionary}
+            </if>
+        </set>
+
+        <where>
+            id = #{entity.id}
+        </where>
+
+    </update>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="Text" version="1.0">
+	<tabpanel id="entrance">
+		<gridpanel id="userNotSubmitPanel" title="用户列表&lt;待提交&gt;" url="/webapi/system/user/page/list">
+			<column label="主键ID" prop="sysid" xtype="numberfield" hidden="true" />
+			<column label="名称" prop="userName" xtype="textfield" />
+			<column label="时间" prop="date" xtype="datefield" format="Y-m-d" />
+			<column label="类型" prop="type" xtype="combobox" dictKey="DJLX" />
+			<toolbar id="userNotSubmitTb">
+				<button id="bnew" text="新增" iconCls="newButton" handler="CrrHandler" />
+			</toolbar>
+		</gridpanel>
+		<gridpanel id="userListPanel" title="用户列表&lt;查询&gt;" url="/getList">
+			<column label="主键ID" prop="sysid" xtype="numberfield" hidden="true" />
+			<column label="名称" prop="name" xtype="textfield" />
+			<column label="时间" prop="date" xtype="datefield" format="Y-m-d" />
+			<column label="类型" prop="type" xtype="combobox" dictKey="DJLX" />
+		</gridpanel>
+	</tabpanel>   
+	<script id="script"><![CDATA[
+		function CrrHandler(t) {
+			if (t.id == "bnew") {
+				var serverWin = Ext.getCmp("serverWin");
+				if (serverWin == null) {
+					Ext.Msg.wait("请求正在提交中,请等候...", "请求", "...");
+					Ext.Ajax.request({
+						url : "getContent",
+						method : "POST",
+						params: {menuCode: "TextForm"},
+						success : function(response, options) {
+							Ext.Msg.hide();
+							var res = $.parseJSON(response.responseText);
+							eval(res.data);
+						},
+						failure: function(form, action) {
+							Ext.MessageBox.alert("警告", action.result.errors);
+						}
+					});
+				}
+			}
+		}
+	]]></script>
+</page>

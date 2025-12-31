@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.marketing.ResultBiddingMapper">
+
+    <!-- 分页列表，支持分页查询和高级查询 -->
+    <select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.marketing.SalesBiddingResultPageListVO">
+        SELECT
+        t_price_bidding.id ,
+        t_price_bidding.customer_id AS customerId,
+        t_price_bidding.customer AS customer,
+        t_price_bidding.latest_quotation AS latestQuotation,
+        t_price_bidding.quantity AS quantity,
+        t_price_bidding.quotation_time AS quotationTime,
+        t_price_bidding.win_bid_status AS winBidStatus
+        FROM t_price_bidding
+        WHERE t_price_bidding.is_deleted = 0
+        AND t_price_bidding.tender_number = #{param.tenderNumber}
+        <if test="param.customerId != null and param.customerId != ''">
+            AND t_price_bidding.customer_id LIKE CONCAT('%', #{param.customerId}, '%')
+        </if>
+        <if test="param.customer != null and param.customer != ''">
+            AND t_price_bidding.customer LIKE CONCAT('%', #{param.customer}, '%')
+        </if>
+        <if test="param.latestQuotation != null and param.latestQuotation != ''">
+            AND t_price_bidding.latest_quotation LIKE CONCAT('%', #{param.latestQuotation}, '%')
+        </if>
+        <if test="param.quantity != null and param.quantity != ''">
+            AND t_price_bidding.quantity LIKE CONCAT('%', #{param.quantity}, '%')
+        </if>
+        <if test="param.quotationTime != null and param.quotationTime != ''">
+            AND t_price_bidding.quotation_time LIKE CONCAT('%', #{param.quotationTime}, '%')
+        </if>
+        <if test="param.winBidStatus != null and param.winBidStatus != ''">
+            AND t_price_bidding.win_bid_status LIKE CONCAT('%', #{param.winBidStatus}, '%')
+        </if>
+        ORDER BY t_price_bidding.quotation_time DESC
+    </select>
+
+</mapper>

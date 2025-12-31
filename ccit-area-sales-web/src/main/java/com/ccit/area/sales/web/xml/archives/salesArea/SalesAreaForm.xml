@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="salesAreaForm" version="1.0">
+	<window id="salesAreaFormWin" title="销售区域" autoScroll="true" width="700" height="520" resize="false" maximizable="true">
+		<formpanel id="salesAreaForm" columns="1" method="/webapi/archives/salesArea/get?id=#{id}">
+			<formwidget xtype="filesetBegin" title="基本信息" columns="2"/>
+			<formwidget fieldLabel="主键ID" fieldProp="id" xtype="textfield" hidden="true" allowBlank="true" />
+			<formwidget fieldLabel="区域编码" fieldProp="areaNo" xtype="textfield" />
+			<formwidget fieldLabel="区域名称" fieldProp="areaName" xtype="textfield" />
+			<formwidget fieldLabel="产品分类编码" fieldProp="productClassNo" xtype="textfield" hidden="true" allowBlank="true" />
+			<formwidget fieldLabel="产品分类名称" fieldProp="productClassName" xtype="treecombo" url="/webapi/archives/productClass/tree/list"
+				text="productClassName" callback="setProductClass" expands="getProductClass" />
+			<formwidget fieldLabel="贸易类型" fieldProp="tradeType" xtype="combo" key="tradeType" />
+			<formwidget fieldLabel="备注" fieldProp="remark" xtype="textfield" allowBlank="true" />
+			<formwidget fieldLabel="状态" fieldProp="status" xtype="combo" key="status" value="SY" />
+			<formwidget xtype="filesetEnd" />
+			<formwidget xtype="filesetBegin" title="制单用户信息" columns="2"/>
+			<formwidget fieldLabel="制单人" fieldProp="createByName" xtype="displayfield" />
+			<formwidget fieldLabel="制单时间" fieldProp="gmtCreate" xtype="displayfield" />
+			<formwidget fieldLabel="单位名称" fieldProp="orgName" xtype="displayfield" />
+			<formwidget fieldLabel="部门名称" fieldProp="deptName" xtype="displayfield" />
+			<formwidget fieldLabel="最后修改人" fieldProp="updateByName" xtype="displayfield" />
+			<formwidget fieldLabel="最后修改时间" fieldProp="gmtModified" xtype="displayfield" />
+			<formwidget xtype="filesetEnd" />
+		</formpanel>
+		<button id="save" text="保存" iconCls="saveButton" handler="CrrHandler" />
+	</window>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 保存&更新事件
+			if (t.id == "save") {
+				if (Ext.getCmp('salesAreaForm').getForm().isValidCux()) {
+					var data = Ext.getCmp("salesAreaForm").getForm().getValues();
+					var url = "/webapi/archives/salesArea/add";
+					if (data.id != null && data.id != "") {
+						url = "/webapi/archives/salesArea/edit";
+					}
+					post(url, data, function(res) {
+						Ext.MessageBox.alert("提示", res.msg);
+						Ext.getCmp('salesAreaList').getStore().load();
+						Ext.getCmp('salesAreaFormWin').close();
+					});
+				}
+			}
+		}
+		// 产品分类赋值
+		function setProductClass(data) {
+			Ext.getCmp("salesAreaForm").getForm().findField("productClassNo").setValue(data.productClassNo);
+		}
+		// 获取产品分类值
+		function getProductClass() {
+			var form = Ext.getCmp("salesAreaForm").getForm();
+			var data = {
+				productClassNo: form.findField("productClassNo").getValue()
+			}
+			return data;
+		}
+	]]></script>
+</page>

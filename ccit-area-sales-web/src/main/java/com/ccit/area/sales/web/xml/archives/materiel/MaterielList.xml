@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="materielList" version="1.0">
+	<panel id="entrance" autoScroll="true">
+		<gridpanel id="materielList" title="产品档案" url="/webapi/archives/materiel/page/list">
+			<column label="主键ID" prop="id" xtype="numberfield" hidden="true" />
+			<column label="产品编码" prop="materielNo" xtype="textfield" renderer="linkurl" route="materielForm" />
+			<column label="产品名称" prop="materielName" xtype="textfield" />
+			<column label="产品等级" prop="materielLevel" xtype="combo" comboKey="level" />
+			<column label="产品分类编码" prop="productClassNo" xtype="textfield" />
+			<column label="产品分类名称" prop="productClassName" xtype="textfield" />
+			<column label="牌号编码" prop="skuNo" xtype="textfield" />
+			<column label="牌号名称" prop="skuName" xtype="textfield" />
+			<column label="单位" prop="unit" xtype="combo" comboKey="unit" />
+			<column label="生产厂商编码" prop="manufacturerCode" xtype="textfield" />
+			<column label="生产厂商名称" prop="manufacturerName" xtype="textfield" />
+			<column label="执行标准" prop="executiveStandard" xtype="combo" comboKey="zxbz" />
+			<column label="标准号" prop="standardNumber" xtype="textfield" />
+			<column label="ERP产品编码" prop="erpMaterielNo" xtype="textfield" />
+			<column label="ERP产品名称" prop="erpMaterielName" xtype="textfield" />
+			<column label="ERP产品属性" prop="erpMaterielShowdesc" xtype="textfield" />
+			<column label="税额" prop="tax" xtype="textfield" />
+			<column label="开票名称" prop="receiptName" xtype="textfield" />
+			<column label="开票规格" prop="receiptMatrielType" xtype="textfield" />
+			<column label="组织编码" prop="orgNo" xtype="textfield" hidden="true" />
+			<column label="组织名称" prop="orgName" xtype="textfield" />
+			<column label="部门编码" prop="deptNo" xtype="textfield"  hidden="true" />
+			<column label="部门名称" prop="deptName" xtype="textfield" />
+			<toolbar id="materielListTb">
+				<button id="add" text="新增" iconCls="addButton" handler="CrrHandler" />
+				<button id="edit" text="修改" iconCls="editButton" handler="CrrHandler" />
+				<button id="delete" text="删除" iconCls="deleteButton" handler="CrrHandler" />
+			</toolbar>
+		</gridpanel>
+	</panel>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 新增事件
+			if (t.id == "add") {
+				var data = {prefixTitle: "新增"};
+				handleRoute("materielForm", data);
+			}
+			// 修改事件
+			if (t.id == "edit") {
+				var records = Ext.getCmp("materielList").getSelectionModel().getSelection();
+				if (records.length != 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行修改!");
+					return false;
+				}
+				var data = {id: records[0].id, prefixTitle: "修改"};
+				handleRoute("materielForm", data);
+			}
+			// 删除事件
+			if (t.id == "delete") {
+				var records = Ext.getCmp("materielList").getSelectionModel().getSelection();
+				if (records.length < 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行删除!");
+					return false;
+				}
+				handleDelConfirm("/webapi/archives/materiel/delete", records, Ext.getCmp("materielList"));
+			}
+		}
+	]]></script>
+</page>

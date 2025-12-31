@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="chooseDeliveryPlaceClass" version="1.0">
+	<window id="deliveryPlaceClassWin" title="选择提货地分类" autoScroll="true" width="800" height="600" resize="false" maximizable="true">
+		<gridpanel id="deliveryPlaceClass" url="/webapi/archives/deliveryPlaceClass/page/list" mode="single">
+			<column label="提货地分类编码" prop="deliveryPlaceClassNo" xtype="textfield" />
+			<column label="提货地分类名称" prop="deliveryPlaceClassName" xtype="textfield" width="400" />
+		</gridpanel>
+		<button id="deliveryPlaceClassVerify" text="确定" iconCls="commitButton" handler="CrrHandler" callback="confirm" />
+	</window>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 确定事件
+			if (t.id == "deliveryPlaceClassVerify") {
+				var records = Ext.getCmp("deliveryPlaceClass").getSelectionModel().getSelection();
+				if (records.length != 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行确认!");
+					return false;
+				}
+				eval(t.callback + "(records[0].data)");
+				deliveryPlaceClassWin.close();
+			}
+		}
+	]]></script>
+</page>

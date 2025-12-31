@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="depotList" version="1.0">
+	<panel id="entrance" autoScroll="true">
+		<treepanel id="depotTreeList" title="仓库档案" url="/webapi/archives/depot/tree/list">
+			<column label="主键ID" prop="id" hidden="true" />
+			<column label="仓库名称" prop="depotName" xtype="treecolumn" flex="1"/>
+			<column label="仓库编码" prop="depotNo"  />
+			<column label="仓库排序" prop="depotOrders" />
+			<column label="是否港口" prop="isPortName" />
+			<column label="是否中转库" prop="isTransitName" />
+			<column label="状态" prop="statusName" />
+			<column label="管理员" prop="manager" />
+			<column label="管理员联系电话" prop="managerTelephone" />
+			<toolbar id="depotTreeListTb">
+				<button id="add" text="新增" iconCls="addButton" handler="CrrHandler" />
+				<button id="edit" text="修改" iconCls="editButton" handler="CrrHandler" />
+				<button id="delete" text="删除" iconCls="deleteButton" handler="CrrHandler" />
+				<button id="search" text="查询" iconCls="searchButton" handler="CrrHandler" />
+			</toolbar>
+		</treepanel>
+	</panel>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 新增事件
+			if (t.id == "add") {
+				var data = {prefixTitle: "新增"};
+				handleRoute("depotForm", data);
+			}
+			// 修改事件
+			if (t.id == "edit") {
+				var records = Ext.getCmp("depotTreeList").getSelectionModel().getSelection();
+				if (records.length != 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行修改!");
+					return false;
+				}
+				var data = {id: records[0].id, prefixTitle: "修改"};
+				handleRoute("depotForm", data);
+			}
+			// 删除事件
+			if (t.id == "delete") {
+				var records = Ext.getCmp("depotTreeList").getSelectionModel().getSelection();
+				if (records.length != 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行删除!");
+					return false;
+				}
+				handleDelConfirm("/webapi/archives/depot/delete", records, Ext.getCmp("depotTreeList"));
+			}
+			// 搜索事件
+			if (t.id == "search") {
+				Ext.getCmp('depotTreeList').getStore().load({params: {parentId: 'root'}});
+			}
+		}
+	]]></script>
+</page>

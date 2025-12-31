@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.customerprofile.PdfFileMapper">
+
+    <select id="selectAttachment" resultType="com.ccit.area.sales.dao.vo.customer.TPdfFileVO">
+        select
+        tpf.pdf_id as pdfId,
+        tpf.file_name as fileName,
+        tpf.file_type as fileType,
+        tpf.file_path as filePath,
+        tpf.last_modified_by as lastModifiedBy,
+        tpf.create_time as createTime
+        from t_annual_agreement ta
+        join t_agreements_pdf_association tag
+        on ta.attachment_id = tag.attachment_id
+        join t_pdf_file tpf
+        on tpf.pdf_id = tag.pdf_id
+        <where>
+            tpf.is_deleted = #{param.is_deleted}
+            <if test="param.attachmentId != null and param.attachmentId != ''">
+                AND ta.attachment_id = #{param.attachmentId}
+            </if>
+            <if test="param.fileName != null and param.fileName != ''">
+                AND tpf.file_name Like CONCAT('%',#{param.fileName},'%')
+            </if>
+            <if test="param.fileType != null and param.fileType != ''">
+                AND tpf.file_type Like CONCAT('%',#{param.fileType},'%')
+            </if>
+            <if test="param.filePath != null and param.filePath != ''">
+                AND tpf.file_path Like CONCAT('%',#{param.filePath},'%')
+            </if>
+            <if test="param.lastModifiedBy != null and param.lastModifiedBy != ''">
+                AND tpf.last_modified_by Like CONCAT('%',#{param.lastModifiedBy},'%')
+            </if>
+            <if test="param.createTime != null and param.createTime != ''">
+                AND tpf.create_time Like CONCAT('%',#{param.createTime},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectQualification" resultType="com.ccit.area.sales.dao.vo.customer.TPdfFileVO">
+        select
+        tpf.pdf_id as pdfId,
+        tpf.file_name as fileName,
+        tpf.file_type as fileType,
+        tpf.file_path as filePath,
+        tpf.last_modified_by as lastModifiedBy,
+        tpf.create_time as createTime
+        from t_customer_qualification tq
+        join t_qualifications_pdf_association tqp
+        on tq.attachment_id = tqp.attachment_id
+        join t_pdf_file tpf
+        on tpf.pdf_id = tqp.pdf_id
+        <where>
+            tpf.is_deleted = #{param.is_deleted}
+            <if test="param.attachmentId != null and param.attachmentId != ''">
+                AND tq.attachment_id = #{param.attachmentId}
+            </if>
+            <if test="param.fileName != null and param.fileName != ''">
+                AND tpf.file_name Like CONCAT('%',#{param.fileName},'%')
+            </if>
+            <if test="param.fileType != null and param.fileType != ''">
+                AND tpf.file_type Like CONCAT('%',#{param.fileType},'%')
+            </if>
+            <if test="param.filePath != null and param.filePath != ''">
+                AND tpf.file_path Like CONCAT('%',#{param.filePath},'%')
+            </if>
+            <if test="param.lastModifiedBy != null and param.lastModifiedBy != ''">
+                AND tpf.last_modified_by Like CONCAT('%',#{param.lastModifiedBy},'%')
+            </if>
+            <if test="param.createTime != null and param.createTime != ''">
+                AND tpf.create_time Like CONCAT('%',#{param.createTime},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

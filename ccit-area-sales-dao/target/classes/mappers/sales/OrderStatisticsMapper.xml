@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.sales.OrderStatisticsMapper">
+    <select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.sales.OrderStatisticsVO">
+        select
+        id,
+        take_order_no,
+        status,
+        workflowid,
+        shbz,
+        company_name,
+        create_by_name,
+        gmt_create
+        from
+        t_order_statistics
+        <where>
+            is_deleted = #{param.is_deleted}
+            <if test="param.orgNoList != null and param.orgNoList != ''">
+                AND t_order_statistics.company_no IN
+                <foreach item="item" index="index" collection="param.orgNoList"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="param.takeOrderNo != null and param.takeOrderNo != ''">
+                and take_order_no LIKE CONCAT('%', #{param.takeOrderNo}, '%')
+            </if>
+            <if test="param.status != null and param.status != ''">
+                and status LIKE CONCAT('%', #{param.status}, '%')
+            </if>
+            <if test="param.companyName != null and param.companyName != ''">
+                and company_name LIKE CONCAT('%', #{param.companyName}, '%')
+            </if>
+            <if test="param.createByName != null and param.createByName != ''">
+                and create_by_name LIKE CONCAT('%', #{param.createByName}, '%')
+            </if>
+            <if test="param.gmtCreate != null and param.gmtCreate != ''">
+                and gmt_create LIKE CONCAT('%', #{param.gmtCreate}, '%')
+            </if>
+        </where>
+        <if test="param.field != null and param.field != '' and param.sortType != null and param.sortType != ''">
+            ORDER BY ${param.field} ${param.sortType}
+        </if>
+    </select>
+
+    <update id="updateStatus">
+        update t_order_line
+        set ors_status = '已完成'
+        where order_line_no = #{orderLineNo}
+    </update>
+</mapper>

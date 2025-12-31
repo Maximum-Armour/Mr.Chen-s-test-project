@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="deliveryPlaceClassForm" version="1.0">
+	<window id="deliveryPlaceClassFormWin" title="提货地分类" autoScroll="true" width="700" height="460" resize="false" maximizable="true">
+		<formpanel id="deliveryPlaceClassForm" columns="1" method="/webapi/archives/deliveryPlaceClass/get?id=#{id}">
+			<formwidget xtype="filesetBegin" title="基本信息" columns="2"/>
+			<formwidget fieldLabel="主键ID" fieldProp="id" xtype="textfield" hidden="true" allowBlank="true" />
+			<formwidget fieldLabel="提货地分类编码" fieldProp="deliveryPlaceClassNo" xtype="textfield" />
+			<formwidget fieldLabel="提货地分类名称" fieldProp="deliveryPlaceClassName" xtype="textfield" />
+			<formwidget fieldLabel="提货地分类排序" fieldProp="deliveryPlaceClassOrders" xtype="numberfield" />
+			<formwidget fieldLabel="状态" fieldProp="status" xtype="combo" key="status" value="SY" />
+			<formwidget xtype="filesetEnd" />
+			<formwidget xtype="filesetBegin" title="制单用户信息" columns="2"/>
+			<formwidget fieldLabel="制单人" fieldProp="createByName" xtype="displayfield" />
+			<formwidget fieldLabel="制单时间" fieldProp="gmtCreate" xtype="displayfield" />
+			<formwidget fieldLabel="单位名称" fieldProp="orgName" xtype="displayfield" />
+			<formwidget fieldLabel="部门名称" fieldProp="deptName" xtype="displayfield" />
+			<formwidget fieldLabel="最后修改人" fieldProp="updateByName" xtype="displayfield" />
+			<formwidget fieldLabel="最后修改时间" fieldProp="gmtModified" xtype="displayfield" />
+			<formwidget xtype="filesetEnd" />
+		</formpanel>
+		<button id="save" text="保存" iconCls="saveButton" handler="CrrHandler" />
+	</window>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 保存&更新事件
+			if (t.id == "save") {
+				if (Ext.getCmp('deliveryPlaceClassForm').getForm().isValidCux()) {
+					var data = Ext.getCmp("deliveryPlaceClassForm").getForm().getValues();
+					var url = "/webapi/archives/deliveryPlaceClass/add";
+					if (data.id != null && data.id != "") {
+						url = "/webapi/archives/deliveryPlaceClass/edit";
+					}
+					post(url, data, function(res) {
+						Ext.MessageBox.alert("提示", res.msg);
+						Ext.getCmp('deliveryPlaceClassList').getStore().load();
+						Ext.getCmp('deliveryPlaceClassFormWin').close();
+					});
+				}
+			}
+		}
+	]]></script>
+</page>

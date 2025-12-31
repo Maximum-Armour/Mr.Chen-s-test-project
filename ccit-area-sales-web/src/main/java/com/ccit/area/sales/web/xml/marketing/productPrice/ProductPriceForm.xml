@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="productPriceForm" version="1.0">
+	<window id="productPriceFormWin" title="产品定价" layout="vbox" autoScroll="true">
+		<formpanel id="productPriceForm" columns="1" height="360" method="/webapi/marketing/productPrice/get?id=#{id}">
+			<formwidget xtype="filesetBegin" title="基本信息" columns="4"/>
+			<formwidget fieldLabel="主键ID" fieldProp="id" xtype="textfield" hidden="true" allowBlank="true" />
+			<formwidget fieldLabel="产品定价编码" fieldProp="productPriceNo" xtype="textfield" />
+			<formwidget fieldLabel="产品编码" fieldProp="materielNo" xtype="textfield" hidden="true" />
+			<formwidget fieldLabel="产品名称" fieldProp="materielName" xtype="trigger" clearKeys="skuName,productClassName" onTriggerClick="chooseMateriel"/>
+			<formwidget fieldLabel="牌号编码" fieldProp="skuNo" xtype="textfield" hidden="true" />
+			<formwidget fieldLabel="牌号名称" fieldProp="skuName" xtype="textfield" readOnly="true" emptyTextFlag="false" />
+			<formwidget fieldLabel="产品分类编码" fieldProp="productClassNo" xtype="textfield" hidden="true" />
+			<formwidget fieldLabel="产品分类名称" fieldProp="productClassName" xtype="textfield" readOnly="true" emptyTextFlag="false" />
+			<formwidget fieldLabel="币种" fieldProp="currency" xtype="combo" key="currency" />
+			<formwidget fieldLabel="贸易类型" fieldProp="tradeType" xtype="combo" key="tradeType" />
+			<formwidget fieldLabel="单价模式" fieldProp="univalenceModel" xtype="combo" key="djms" />
+			<formwidget fieldLabel="业务类型" fieldProp="businessType" xtype="combo" key="businessType" />
+			<formwidget fieldLabel="有效开始时间" fieldProp="effectiveStartTime" xtype="datetimefield" />
+			<formwidget fieldLabel="有效结束时间" fieldProp="effectiveEndTime" xtype="datetimefield" />
+			<formwidget xtype="filesetEnd" />
+			<formwidget xtype="filesetBegin" title="制单用户信息" columns="4"/>
+			<formwidget fieldLabel="制单人" fieldProp="createByName" xtype="displayfield" />
+			<formwidget fieldLabel="制单时间" fieldProp="gmtCreate" xtype="displayfield" />
+			<formwidget fieldLabel="单位名称" fieldProp="orgName" xtype="displayfield" />
+			<formwidget fieldLabel="部门名称" fieldProp="deptName" xtype="displayfield" />
+			<formwidget fieldLabel="最后修改人" fieldProp="updateByName" xtype="displayfield" />
+			<formwidget fieldLabel="最后修改时间" fieldProp="gmtModified" xtype="displayfield" />
+			<formwidget xtype="filesetEnd" />
+		</formpanel>
+		<gridpanel id="productPriceItemList" title="产品定价明细" url="/webapi/marketing/productPrice/item/page/list" 
+				flex="1" style="margin: 0px 15px 15px 15px;" param="id" editor="true">
+			<column label="主键ID" prop="id" xtype="textfield" hidden="true" />
+			<column label="产品定价明细编码" prop="productPriceItemNo" xtype="textfield" width="170" readOnly="true" />
+			<column label="方案明细编码" prop="schemeItemNo" xtype="textfield" width="170" readOnly="true" hidden="true" />
+			<column label="区域编码" prop="areaNo" xtype="textfield" hidden="true" readOnly="true" />
+			<column label="区域名称" prop="areaName" xtype="textfield" readOnly="true" />
+			<column label="提货地编码" prop="deliveryPlaceNo" xtype="textfield" hidden="true"  readOnly="true" />
+			<column label="提货地名称" prop="deliveryPlaceName" xtype="textfield" readOnly="true" />
+			<column label="提货地分类编码" prop="deliveryPlaceClassNo" xtype="textfield" hidden="true"  readOnly="true" />
+			<column label="提货地分类名称" prop="deliveryPlaceClassName" xtype="textfield" readOnly="true" />
+			<column label="配送方式" prop="distributionWay" xtype="combo" comboKey="psfs" readOnly="true" />
+			<column label="运输方式" prop="transportWay" xtype="combo" comboKey="ysfs" readOnly="true" />
+			<column label="不含税单价" prop="price" xtype="textfield" regex="/^(\d+|\d+\.\d{0,4})$/" regexText="请输入有效的小数或者整数，小数位不超过4位" />
+			<column label="含税单价" prop="taxPrice" xtype="textfield" allowBlank="false" regex="/^(\d+|\d+\.\d{0,4})$/" regexText="请输入有效的小数或者整数，小数位不超过4位" />
+			<column label="仓库编码" prop="depotNo" xtype="textfield" hidden="true" readOnly="true" />
+			<column label="仓库名称" prop="depotName" xtype="trigger" onTriggerClick="chooseDepot" allowBlank="false" />
+			<column label="对标价格" prop="benchmarkPrice" xtype="textfield" regex="/^(\d+|\d+\.\d{0,4})$/" regexText="请输入有效的小数或者整数，小数位不超过4位" />
+			<column label="单价单位" prop="currencyUnit" xtype="combo" comboKey="priceUnit" readOnly="true" />
+			<column label="描述" prop="remark" xtype="textfield" />
+			<toolbar id="productPriceItemListTb">
+				<button id="itemNew" text="参数" iconCls="addButton" handler="CrrHandler" />
+				<button id="itemDelete" text="删除" iconCls="deleteButton" handler="CrrHandler" />
+			</toolbar>
+		</gridpanel>
+		<button id="save" text="保存" iconCls="saveButton" handler="CrrHandler" />
+	</window>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 保存&更新事件
+			if (t.id == "save") {
+				var formpanel = Ext.getCmp("productPriceForm").getForm();
+				if (formpanel.isValidCux()) {
+					var gridpanel = Ext.getCmp("productPriceItemList");
+					var gridpanelData = gridpanel.getStore().getData();
+					if (gridpanel.operateArray.length === 0 && gridpanelData.length === 0) {
+						Ext.MessageBox.alert("提示", "请参选产品定价明细！");
+						return false;
+					}
+					var data = formpanel.getValues();
+					if (gridpanel.operateArray.length > 0) {
+						var newData = [];
+						for(var i = 0; i < gridpanel.operateArray.length; i++) {
+							var d = gridpanel.operateArray[i];
+							if (isNull(d.taxPrice)) {
+								Ext.MessageBox.alert("提示", "第" + (i+1) + "行，含税单价不能为空！");
+								return false;
+							}
+							if (isNull(d.depotName)) {
+								Ext.MessageBox.alert("提示", "第" + (i+1) + "行，仓库名称不能为空！");
+								return false;
+							}
+						}
+					}
+					data.itemAddList = gridpanel.operateArray;
+					var url = "/webapi/marketing/productPrice/add";
+					if (data.id != null && data.id != "") {
+						url = "/webapi/marketing/productPrice/edit";
+					}
+					post(url, data, function(res) {
+						Ext.MessageBox.alert("提示", res.msg);
+						Ext.getCmp('productPriceListNew').getStore().load();
+						Ext.getCmp('productPriceFormWin').close();
+					});
+				}
+			}
+			// 明细新增事件
+			if (t.id == "itemNew") {
+				var data = {confirm: "priceSchemeItemfirm"};
+				handleRoute("ChoosePriceSchemeItem", data);
+			}
+			// 明细删除事件
+			if (t.id == "itemDelete") {
+				var records = Ext.getCmp("productPriceItemList").getSelectionModel().getSelection();
+				if (records.length < 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行删除!");
+					return false;
+				}
+				handleDelConfirm("/webapi/marketing/productPrice/item/delete", records, Ext.getCmp("productPriceItemList"));
+			}
+		}
+		// 产品档案列表
+		function chooseMateriel(data) {
+			var data = {confirm: "materielConfirm"};
+			handleRoute("ChooseMateriel", data);
+		}
+		// 产品档案确定事件
+		function materielConfirm(data) {
+			var form = Ext.getCmp("productPriceForm").getForm();
+			form.findField("materielNo").setValue(data.materielNo);
+			form.findField("materielName").setValue(data.materielName);
+			form.findField("skuNo").setValue(data.skuNo);
+			form.findField("skuName").setValue(data.skuName);
+			form.findField("productClassNo").setValue(data.productClassNo);
+			form.findField("productClassName").setValue(data.productClassName);
+		}
+		// 仓库档案列表
+		function chooseDepot() {
+			var data = {confirm: "singleDepotConfirm"};
+			handleRoute("ChooseSingleDepot", data);
+		}
+		// 仓库档案确定事件
+		function singleDepotConfirm(data) {
+			Ext.getCmp("editor_productPriceItemList_depotNo").setValue(data.depotNo);
+			Ext.getCmp("editor_productPriceItemList_depotName").setValue(data.depotName);
+		}
+		// 定价方案明细确认事件
+		function priceSchemeItemfirm(data) {
+			var newData = [];
+			for(var i = 0; i < data.length; i++) {
+				var obj = {
+					schemeNo: data[i].data.schemeNo,
+					schemeItemNo: data[i].data.schemeItemNo,
+					areaNo: data[i].data.areaNo,
+					areaName: data[i].data.areaName,
+					deliveryPlaceNo: data[i].data.deliveryPlaceNo,
+					deliveryPlaceName: data[i].data.deliveryPlaceName,
+					deliveryPlaceClassNo: data[i].data.deliveryPlaceClassNo,
+					deliveryPlaceClassName: data[i].data.deliveryPlaceClassName,
+					distributionWay: data[i].data.distributionWay,
+					transportWay: data[i].data.transportWay,
+					payWay: data[i].data.payWay,
+					currencyUnit: "CNY" == data[i].data.currency ? "YMT" : "MYMT",
+					productPriceItemNo : Ext.getCmp("productPriceForm").getForm().findField("productPriceNo").getValue() + 
+						(i + 1).toString().padStart(4, '0')
+				}
+				newData.push(obj);
+			}
+			setArrayData(Ext.getCmp('productPriceItemList'), newData);
+			Ext.getCmp('productPriceItemList').getStore().load();
+		}
+		// 重写加载事件
+		Ext.getCmp('productPriceItemList').getStore().on('load', function(store) {
+			var panel = Ext.getCmp('productPriceItemList');
+			store.add(panel.operateArray);
+			panel.down('pagingtoolbarcustom').updatePagingInfo(store.getCount(), store.pageSize);
+		});
+		// 进行修改
+		Ext.getCmp('productPriceItemList').on('edit', function(editor, e) {
+			if (!e.newValues.id.includes("productPriceItemListModel")) {
+				var url = "/webapi/marketing/productPrice/item/edit";
+				post(url, e.newValues, function(res) {
+					Ext.MessageBox.alert("提示", res.msg);
+					Ext.getCmp('productPriceItemList').getStore().load();
+				});
+			}
+		});
+	]]></script>
+</page>

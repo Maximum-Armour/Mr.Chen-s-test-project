@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.marketing.ProductPriceMapper">
+
+	<!-- 分页列表，支持分页查询和高级查询 -->
+	<select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.marketing.ProductPricePageListVO" parameterType="map">
+		SELECT
+			t_product_price.id,
+			t_product_price.`status`,
+			t_product_price.product_price_no AS productPriceNo,
+			t_product_price.product_class_no AS productClassNo,
+			t_product_price.product_class_name AS productClassName,
+			t_product_price.sku_no AS skuNo,
+			t_product_price.sku_name AS skuName,
+			t_product_price.materiel_no AS materielNo,
+			t_product_price.materiel_name AS materielName,
+			t_product_price.currency,
+			t_product_price.trade_type AS tradeType,
+			t_product_price.univalence_model AS univalenceModel,
+			t_product_price.business_type AS businessType,
+			t_product_price.effective_start_time AS effectiveStartTime,
+			t_product_price.effective_end_time AS effectiveEndTime,
+			t_product_price.org_no AS orgNo,
+			t_product_price.org_name AS orgName,
+			t_product_price.workflowid AS workflowid,
+			t_product_price.company_no AS companyNo
+		FROM
+			t_product_price
+		LEFT JOIN t_system_user
+		ON t_product_price.create_by = t_system_user.id
+		WHERE
+			t_product_price.is_deleted = #{param.deleted}
+		AND t_product_price.org_no IN
+		<foreach item="item" index="index" collection="param.orgNoList"
+				 open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		<if test="param.userName != null and param.userName != ''">
+			AND t_system_user.user_name LIKE CONCAT('%', #{param.userName}, '%')
+		</if>
+		<if test="param.orgNo != null and param.orgNo != ''">
+			AND t_product_price.org_no LIKE CONCAT('%', #{param.orgNo}, '%')
+		</if>
+		<if test="param.shbz != null and param.shbz != ''">
+			AND t_product_price.shbz = #{param.shbz}
+		</if>
+		<if test="param.status != null and param.status != ''">
+			AND t_product_price.`status` LIKE CONCAT('%', #{param.status}, '%')
+		</if>
+		<if test="param.productPriceNo != null and param.productPriceNo != ''">
+			AND t_product_price.product_price_no LIKE CONCAT('%', #{param.productPriceNo}, '%')
+		</if>
+		<if test="param.productClassNo != null and param.productClassNo != ''">
+			AND t_product_price.product_class_no LIKE CONCAT('%', #{param.productClassNo}, '%')
+		</if>
+		<if test="param.productClassName != null and param.productClassName != ''">
+			AND t_product_price.product_class_name LIKE CONCAT('%', #{param.productClassName}, '%')
+		</if>
+		<if test="param.skuNo != null and param.skuNo != ''">
+			AND t_product_price.sku_no LIKE CONCAT('%', #{param.skuNo}, '%')
+		</if>
+		<if test="param.skuName != null and param.skuName != ''">
+			AND t_product_price.sku_name LIKE CONCAT('%', #{param.skuName}, '%')
+		</if>
+		<if test="param.materielNo != null and param.materielNo != ''">
+			AND t_product_price.materiel_no LIKE CONCAT('%', #{param.materielNo}, '%')
+		</if>
+		<if test="param.materielName != null and param.materielName != ''">
+			AND t_product_price.materiel_name LIKE CONCAT('%', #{param.materielName}, '%')
+		</if>
+		<if test="param.currency != null and param.currency != ''">
+			AND t_product_price.currency LIKE CONCAT('%', #{param.currency}, '%')
+		</if>
+		<if test="param.tradeType != null and param.tradeType != ''">
+			AND t_product_price.trade_type LIKE CONCAT('%', #{param.tradeType}, '%')
+		</if>
+		<if test="param.univalenceModel != null and param.univalenceModel != ''">
+			AND t_product_price.univalence_model LIKE CONCAT('%', #{param.univalenceModel}, '%')
+		</if>
+		<if test="param.businessType != null and param.businessType != ''">
+			AND t_product_price.business_type LIKE CONCAT('%', #{param.businessType}, '%')
+		</if>
+		<if test="param.effectiveStartTime != null">
+			AND t_product_price.effective_start_time LIKE CONCAT('%', #{param.effectiveStartTime}, '%')
+		</if>
+		<if test="param.effectiveEndTime != null">
+			AND t_product_price.effective_end_time LIKE CONCAT('%', #{param.effectiveEndTime}, '%')
+		</if>
+		<if test="param.orgName != null and param.orgName != ''">
+			AND t_product_price.org_name LIKE CONCAT('%', #{param.orgName}, '%')
+		</if>
+		<if test="param.deptNo != null and param.deptNo != ''">
+			AND t_product_price.dept_no LIKE CONCAT('%', #{param.deptNo}, '%')
+		</if>
+		<if test="param.deptName != null and param.deptName != ''">
+			AND t_product_price.dept_name LIKE CONCAT('%', #{param.deptName}, '%')
+		</if>
+		ORDER BY
+			t_product_price.gmt_modified DESC
+	</select>
+
+	<select id="selectItemCount" resultType="java.lang.Long">
+		SELECT
+		    count(t_product_price_item.id)
+		FROM
+			t_product_price_item
+	</select>
+
+	<insert id="insertItem">
+		INSERT INTO
+		    t_product_price_item
+		    (product_price_no, product_price_item_no, scheme_item_no, price,
+			 tax_price, depot_no, depot_name, currency_unit, benchmark_price,
+			 remark, gmt_create, gmt_modified)
+		VALUES
+		    (#{productPriceNo}, #{productPriceItemNo}, #{schemeItemNo}, #{price},
+		     #{taxPrice}, #{depotNo}, #{depotName}, #{currencyUnit}, #{benchmarkPrice},
+		     #{remark}, #{gmtCreate}, #{gmtModified})
+	</insert>
+
+	<update id="updateItem">
+		UPDATE
+		    t_product_price_item
+		SET
+		    t_product_price_item.product_price_no = #{productPriceNo},
+		    t_product_price_item.product_price_item_no = #{productPriceItemNo},
+		    t_product_price_item.scheme_item_no = #{schemeItemNo},
+		    t_product_price_item.price = #{price},
+		    t_product_price_item.tax_price = #{taxPrice},
+		    t_product_price_item.depot_no = #{depotNo},
+		    t_product_price_item.depot_name = #{depotName},
+		    t_product_price_item.currency_unit = #{currencyUnit},
+		    t_product_price_item.benchmark_price = #{benchmarkPrice},
+		    t_product_price_item.remark = #{remark}
+		WHERE t_product_price_item.id = #{id}
+	</update>
+
+	<select id="productPriceNoCount" resultType="java.lang.Long">
+		SELECT
+			count(t_product_price.product_price_no)
+		FROM
+			t_product_price
+		WHERE t_product_price.is_deleted = 0
+		AND t_product_price.user_name = #{userName}
+		AND t_product_price.org_no = #{orgNo}
+	</select>
+
+	<select id="productPriceItemNoCount" resultType="java.lang.Long">
+		SELECT
+			count(t_product_price_item.product_price_item_no)
+		FROM
+			t_product_price_item
+		WHERE t_product_price_item.product_price_no = #{productPriceNo}
+	</select>
+
+	<select id="orgNoAbbreviation" resultType="java.lang.String">
+		select t_system_org.org_no_abbreviation
+		from t_system_org
+		where t_system_org.org_no = #{orgNo}
+	</select>
+
+	<update id="serialNumber">
+		UPDATE t_product_price
+		SET t_product_price.serial_number = #{serialNumber}
+	</update>
+
+	<update id="shbz">
+		UPDATE t_product_price
+		SET t_product_price.shbz = #{param.approvalStatus},
+			t_product_price.status = '审核完成'
+		WHERE t_product_price.id = #{param.id}
+	</update>
+
+	<select id="depotName" resultType="java.lang.String">
+		select t_depot.depot_name
+		from t_depot
+		where t_depot.depot_no = #{depotNo}
+	</select>
+
+	<select id="selectOrgNo" resultType="java.lang.String">
+		SELECT t_system_org.org_no
+		FROM t_system_org
+		WHERE t_system_org.id =
+			  (	SELECT
+					   t_system_org.parent_id
+				   FROM
+					   t_system_org
+				   WHERE
+					   t_system_org.org_no = #{orgNo})
+	</select>
+
+	<select id="selectOrgName" resultType="java.lang.String">
+		SELECT t_system_org.org_name
+		FROM t_system_org
+		WHERE t_system_org.org_no = #{orgNo}
+	</select>
+
+	<select id="selectItem" resultType="com.ccit.area.sales.dao.vo.marketing.ProductPriceItemPageListVO">
+		SELECT
+		t_price_scheme_item.area_name AS areaName,
+		t_price_scheme_item.delivery_place_name AS deliveryPlaceName,
+		t_price_scheme_item.delivery_place_class_name AS deliveryPlaceClassName,
+		t_price_scheme_item.distribution_way AS distributionWay,
+		t_price_scheme_item.transport_way AS transportWay,
+		t_price_scheme_item.pay_way AS payWay,
+		t_price_scheme_item.currency,
+		t_price_scheme_item.unit,
+		t_product_price_item.price,
+		t_product_price_item.tax_price AS taxPrice,
+		t_product_price_item.depot_name AS depotName,
+		t_product_price_item.currency_unit AS currencyUnit,
+		t_product_price_item.benchmark_price AS benchmarkPrice,
+		t_product_price_item.remark
+		FROM
+		t_product_price_item
+			LEFT JOIN t_price_scheme_item ON t_product_price_item.scheme_item_no = t_price_scheme_item.scheme_item_no
+		WHERE
+		t_product_price_item.is_deleted = 0
+		  AND t_price_scheme_item.is_deleted = 0
+		AND t_product_price_item.product_price_no = #{productPriceNo}
+	</select>
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.sales.OrderMouldMapper">
+
+
+    <select id="selectorderLineNo" resultType="com.ccit.area.sales.dao.vo.sales.OrderMouldnoVO" parameterType="string">
+        SELECT t_order_mould.order_line_no            AS orderLineNo,
+               t_order_mould.order_type               AS orderType,
+               t_order_mould.flow_protocol            AS flowProtocol,
+               t_order_mould.flow_reporting_cycle     AS flowReportingCycle,
+               t_order_mould.cash_transfer_cycle      AS cashTransferCycle,
+               t_order_mould.acceptance_payment_cycle AS acceptancePaymentCycle,
+               t_order_mould.mode_of_transport        AS modeOfTransport,
+               t_order_mould.order_validity_days      AS orderValidityDays,
+               t_order_mould.delay_days               AS delayDays,
+               t_order_mould.new_terms                AS newTerms,
+               t_order_line.order_start_time          AS orderStartTime,
+               t_order_line.order_end_time            AS orderEndTime
+        FROM t_order_mould
+                 left join
+             t_order_line t_order_line on t_order_mould.order_line_no = t_order_line.order_line_no
+        WHERE t_order_mould.is_deleted = 0
+          AND t_order_mould.order_line_no = #{orderLineNo}
+    </select>
+
+    <update id="updateorderLineNo" parameterType="com.ccit.area.sales.dao.domain.sales.OrderMouldPO">
+        UPDATE t_order_mould
+        SET status=#{status},
+            order_type = #{orderType},
+            flow_protocol = #{flowProtocol},
+            flow_reporting_cycle = #{flowReportingCycle},
+            cash_transfer_cycle = #{cashTransferCycle},
+            acceptance_payment_cycle = #{acceptancePaymentCycle},
+            mode_of_transport = #{modeOfTransport},
+            order_validity_days = #{orderValidityDays},
+            delay_days = #{delayDays},
+            new_terms = #{newTerms}
+        WHERE is_deleted = 0
+          AND order_line_no = #{orderLineNo};
+    </update>
+
+</mapper>

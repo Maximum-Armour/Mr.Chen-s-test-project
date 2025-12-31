@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.system.SystemConfigMapper">
+
+    <!-- 分页列表，支持分页查询和高级查询 -->
+    <select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.system.SystemConfigPageListVO" parameterType="map">
+        SELECT
+        t_system_config.id,
+        t_system_config.config_name AS configName,
+        t_system_config.config_key AS configKey,
+        t_system_config.config_value AS configValue,
+        t_system_config.config_type AS configType
+        FROM
+        t_system_config
+        WHERE
+        t_system_config.is_deleted = #{param.deleted}
+        <if test="param.configName != null and param.configName != ''">
+            AND t_system_config.config_name LIKE CONCAT('%', #{param.configName}, '%')
+        </if>
+        <if test="param.configKey != null and param.configKey != ''">
+            AND t_system_config.config_key LIKE CONCAT('%', #{param.configKey}, '%')
+        </if>
+        <if test="param.configValue != null and param.configValue != ''">
+            AND t_system_config.config_value LIKE CONCAT('%', #{param.configValue}, '%')
+        </if>
+        <if test="param.configType != null and param.configType != ''">
+            AND t_system_config.config_type LIKE CONCAT('%', #{param.configType}, '%')
+        </if>
+        ORDER BY
+        t_system_config.gmt_modified ASC
+    </select>
+</mapper>

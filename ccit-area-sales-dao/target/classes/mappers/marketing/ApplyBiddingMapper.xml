@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.marketing.ApplyBiddingMapper">
+
+    <!-- 分页列表，支持分页查询和高级查询 -->
+    <select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.marketing.ApplyBiddingPageListVO"
+            parameterType="map">
+        SELECT t_apply_bidding.id,
+               t_apply_bidding.tender_number             AS tenderNumber,
+               t_apply_bidding.customer_id               AS customerId,
+               t_apply_bidding.customer                  AS customer,
+               t_apply_bidding.bidding_mode              AS biddingMode,
+               t_apply_bidding.materiel_no               AS materielNo,
+               t_apply_bidding.materiel_name             AS materielName,
+               t_sales_bidding.area_no                   AS areaNo,
+               t_sales_bidding.area_name                 AS areaName,
+               t_sales_bidding.delivery_place_no         AS deliveryPlaceNo,
+               t_sales_bidding.delivery_place_name       AS deliveryPlaceName,
+               t_sales_bidding.delivery_place_class_no   AS deliveryPlaceClassNo,
+               t_sales_bidding.delivery_place_class_name AS deliveryPlaceClassName,
+               t_sales_bidding.delivery_method           AS deliveryMethod,
+               t_sales_bidding.shipping_type             AS shippingType,
+               -- t_apply_bidding.contacts AS contacts,
+--                t_sales_bidding.application_time          AS applicationTime,
+               t_apply_bidding.status                    AS status,
+               t_sales_bidding.depot_no                  AS depotNo,
+               t_sales_bidding.depot_name                AS depotName
+        FROM t_apply_bidding
+                 LEFT JOIN
+             t_sales_bidding
+             ON
+                 t_apply_bidding.tender_number = t_sales_bidding.tender_number
+        WHERE t_apply_bidding.is_deleted = #{param.deleted}
+          and t_apply_bidding.tender_number = #{param.tenderNumber}
+        ORDER BY t_apply_bidding.gmt_modified ASC
+    </select>
+
+    <!-- 分页列表，支持分页查询和高级查询 -->
+    <select id="selectPI" resultType="com.ccit.area.sales.dao.vo.marketing.ApplyBiddingDetailsVO" parameterType="map">
+        SELECT t_apply_bidding.tender_number       AS tenderNumber,
+               t_apply_bidding.customer            AS customer,
+               t_sales_bidding.latest_quotation    AS latestQuotation,
+               t_sales_bidding.bidding_description AS biddingDescription
+        FROM t_apply_bidding
+                 LEFT JOIN
+             t_sales_bidding
+             ON
+                 t_apply_bidding.tender_number = t_sales_bidding.tender_number
+        WHERE t_apply_bidding.is_deleted = '0'
+          AND t_apply_bidding.id = #{param.id}
+    </select>
+
+    <!-- 分页列表，支持分页查询和高级查询 -->
+    <select id="selectI" resultType="com.ccit.area.sales.dao.vo.marketing.ApplyBiddingDetailsVO" parameterType="map">
+        SELECT t_apply_bidding.customer         AS customer,
+               t_apply_bidding.latest_quotation AS latestQuotation
+        FROM t_apply_bidding
+        WHERE t_apply_bidding.is_deleted = '0'
+          AND t_apply_bidding.tender_number = #{param.tenderNumber}
+          AND t_apply_bidding.win_bid_status = '已中标'
+    </select>
+
+    <!-- 分页列表，支持分页查询和高级查询 -->
+    <select id="selectC" resultType="com.ccit.area.sales.dao.vo.marketing.ApplyBiddingDetailsVO" parameterType="map">
+        SELECT t_apply_bidding.customer AS customer
+        FROM t_apply_bidding
+        WHERE t_apply_bidding.is_deleted = '0'
+          AND t_apply_bidding.latest_quotation = #{param.latestQuotation}
+    </select>
+
+    <update id="updateBdY">
+        UPDATE t_sales_bidding
+        SET t_sales_bidding.bidding_description = #{biddingDescription}
+        WHERE t_sales_bidding.tender_number = #{tenderNumber}
+    </update>
+
+    <update id="updateBdW">
+        UPDATE t_sales_bidding
+        SET t_sales_bidding.bidding_description = #{biddingDescription}
+        WHERE t_sales_bidding.tender_number = #{tenderNumber}
+    </update>
+
+    <insert id="addApplyBidding">
+        INSERT INTO t_apply_bidding
+        (tender_number, customer_id, customer, customer_ip, bidding_mode,
+         materiel_no, materiel_name, status, company_no, company_name, create_by, create_by_name)
+        VALUES (#{tenderNumber}, #{customerId}, #{customer}, #{customerIp},
+                #{biddingMode}, #{materielNo}, #{materielName}, #{status}, #{companyNo}, #{companyName},
+                #{createBy}, #{createByName})
+    </insert>
+
+    <select id="selectCount" resultType="java.lang.Long">
+        SELECT COUNT(t_apply_bidding.id)
+        FROM t_apply_bidding
+        WHERE t_apply_bidding.tender_number = #{tenderNumber}
+          AND t_apply_bidding.quotation_time <![CDATA[>=]]> #{signUpTime}
+          AND t_apply_bidding.quotation_time <![CDATA[<=]]> #{signEndTime}
+    </select>
+
+
+    <select id="selectLatestQuotation" resultType="java.math.BigDecimal">
+        SELECT t_apply_bidding.latest_quotation
+        FROM t_apply_bidding
+        WHERE t_apply_bidding.id = #{id}
+    </select>
+
+    <select id="selectQuantity" resultType="java.math.BigDecimal">
+        SELECT t_apply_bidding.quantity
+        FROM t_apply_bidding
+        WHERE t_apply_bidding.id = #{id}
+    </select>
+
+
+    <select id="selectStatus" resultType="com.ccit.area.sales.dao.vo.marketing.ApplyBiddingEndorseVO"
+            parameterType="map">
+        SELECT t_sales_bidding.tender_number AS tenderNumber,
+               t_apply_bidding.customer_id   AS customerId
+        FROM t_apply_bidding
+                 LEFT JOIN t_sales_bidding
+                           ON t_apply_bidding.tender_number = t_sales_bidding.tender_number
+        WHERE t_apply_bidding.id = #{id}
+          AND t_apply_bidding.status = '审核通过'
+    </select>
+
+    <select id="selectCustomerIp" resultType="java.lang.Long">
+        SELECT COUNT(t_apply_bidding.customer_id)
+        FROM t_apply_bidding
+        WHERE t_apply_bidding.tender_number = #{tenderNumber}
+          AND t_apply_bidding.status = '已报名'
+          AND t_apply_bidding.customer_ip = #{customerIp}
+    </select>
+
+    <select id="selectCustomerId" resultType="java.lang.Long">
+        SELECT COUNT(t_apply_bidding.customer_id)
+        FROM t_apply_bidding
+        WHERE t_apply_bidding.tender_number = #{tenderNumber}
+          AND t_apply_bidding.status = '已报名'
+          AND t_apply_bidding.customer_id = #{customerId}
+    </select>
+
+    <select id="getSignUpQuantity" resultType="int">
+        select count(t_apply_bidding.tender_number)
+        from t_apply_bidding
+        where is_deleted = 0
+          and t_apply_bidding.status = '已报名'
+          and t_apply_bidding.tender_number = #{tenderNumber}
+    </select>
+
+    <update id="batchUpdateApprovalStatus">
+        update t_apply_bidding
+        set t_apply_bidding.status = '审核拒绝'
+        where t_apply_bidding.tender_number = #{tenderNumber}
+          and t_apply_bidding.status != '审核通过'
+    </update>
+</mapper>

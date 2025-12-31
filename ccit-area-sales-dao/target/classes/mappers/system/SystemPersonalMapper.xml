@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.system.SystemPersonalMapper">
+
+	<!-- 安全日志分页列表 -->
+	<select id="securityLogPageList" resultType="com.ccit.area.sales.dao.vo.system.SystemSecurityLogPageListVO" parameterType="map">
+		SELECT
+			t_system_login_log.request_ip AS requestIp,
+			t_system_login_log.device_type AS deviceType,
+			t_system_login_log.gmt_create AS gmtCreate
+		FROM
+			t_system_login_log
+		WHERE
+			t_system_login_log.create_by = #{param.userId}
+		ORDER BY
+			t_system_login_log.gmt_create DESC
+	</select>
+	
+</mapper>

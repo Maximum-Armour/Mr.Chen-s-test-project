@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.dingding.ProcessOperationMapper">
+
+    <select id="getHaveDoneApproveDetail" resultType="com.ccit.area.sales.dao.dingding.vo.ProcessOperationVO">
+        select
+        order_number,
+        parent_name,
+        technological_process,
+        operator_name,
+        user_name,
+        operator_time,
+        operation,
+        data_name,
+        gmt_create,
+        approval_id,
+        process_code,
+        business_id
+        from t_process_operation
+        <where>
+            operation = 'YTG'
+<!--            <if test="entity.userCode != null and entity.userCode != ''">-->
+<!--                and user_name = #{entity.userCode}-->
+<!--            </if>-->
+        </where>
+    </select>
+</mapper>

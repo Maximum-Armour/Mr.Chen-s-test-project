@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.archives.SalesAreaMapper">
+
+	<!-- 分页列表，支持分页查询和高级查询  -->
+	<select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.archives.SalesAreaPageListVO" parameterType="map">
+		SELECT
+			t_sales_area.id,
+			t_sales_area.`status`,
+			t_sales_area.area_no AS areaNo,
+			t_sales_area.area_name AS areaName,
+			t_sales_area.product_class_no AS productClassNo,
+			t_sales_area.product_class_name AS productClassName,
+			t_sales_area.trade_type AS tradeType,
+			t_sales_area.remark,
+			t_sales_area.org_no AS orgNo,
+			t_sales_area.org_name AS orgName,
+			t_sales_area.dept_no AS deptNo,
+			t_sales_area.dept_name AS deptName
+		FROM
+			t_sales_area
+		WHERE
+			t_sales_area.is_deleted = #{param.deleted}
+		<if test="param.status != null and param.status != ''">
+			AND t_sales_area.`status` LIKE CONCAT('%', #{param.status}, '%')
+		</if>
+		<if test="param.areaNo != null and param.areaNo != ''">
+			AND t_sales_area.area_no LIKE CONCAT('%', #{param.areaNo}, '%')
+		</if>
+		<if test="param.areaName != null and param.areaName != ''">
+			AND t_sales_area.area_name LIKE CONCAT('%', #{param.areaName}, '%')
+		</if>
+		<if test="param.productClassNo != null and param.productClassNo != ''">
+			AND t_sales_area.product_class_no LIKE CONCAT('%', #{param.productClassNo}, '%')
+		</if>
+		<if test="param.productClassName != null and param.productClassName != ''">
+			AND t_sales_area.product_class_name LIKE CONCAT('%', #{param.productClassName}, '%')
+		</if>
+		<if test="param.tradeType != null and param.tradeType != ''">
+			AND t_sales_area.trade_type LIKE CONCAT('%', #{param.tradeType}, '%')
+		</if>
+		<if test="param.remark != null and param.remark != ''">
+			AND t_sales_area.remark LIKE CONCAT('%', #{param.remark}, '%')
+		</if>
+		ORDER BY
+			t_sales_area.gmt_modified DESC
+	</select>
+
+	<!-- 获取全部节点 -->
+	<select id="selectList" resultType="com.ccit.area.sales.dao.vo.archives.SalesAreaPageListVO" parameterType="map">
+		SELECT
+			t_sales_area.id,
+			t_sales_area.status AS status,
+			t_sales_area.area_no AS areaNo,
+			t_sales_area.area_name AS areaName,
+			t_sales_area.product_class_no AS productClassNo,
+			t_sales_area.product_class_name AS productClassName,
+			t_sales_area.trade_type AS tradeType,
+			t_sales_area.remark AS remark
+		FROM
+			t_sales_area
+		WHERE
+			t_sales_area.is_deleted = 0
+		  AND t_sales_area.status = #{status}
+	</select>
+
+	<!-- 获取全部节点 -->
+	<select id="getChildrenList" resultType="com.ccit.area.sales.dao.vo.archives.SalesAreaPageListVO" parameterType="map">
+		SELECT
+			t_sales_area.id,
+			t_sales_area.status AS status,
+			t_sales_area.area_no AS areaNo,
+			t_sales_area.area_name AS areaName,
+			t_sales_area.product_class_no AS productClassNo,
+			t_sales_area.product_class_name AS productClassName,
+			t_sales_area.trade_type AS tradeType,
+			t_sales_area.remark AS remark
+		FROM
+			t_sales_area
+		WHERE
+			t_sales_area.is_deleted = 0
+		  AND t_sales_area.product_class_no = #{productClassNo}
+	</select>
+
+	<!-- 获取全部节点 -->
+	<select id="getChildrensList" resultType="com.ccit.area.sales.dao.vo.archives.SalesAreaPageListVO" parameterType="map">
+		SELECT
+			t_sales_area.id,
+			t_sales_area.status AS status,
+			t_sales_area.area_no AS areaNo,
+			t_sales_area.area_name AS areaName,
+			t_sales_area.product_class_no AS productClassNo,
+			t_sales_area.product_class_name AS productClassName,
+			t_sales_area.trade_type AS tradeType,
+			t_sales_area.remark AS remark
+		FROM
+			t_sales_area
+		WHERE
+			t_sales_area.is_deleted = 0
+		AND t_sales_area.trade_type = #{tradeType}
+	</select>
+
+	<select id="areaNoCount" resultType="java.lang.Long">
+		SELECT
+		    COUNT(t_sales_area.area_no)
+		FROM
+			t_sales_area
+	</select>
+</mapper>

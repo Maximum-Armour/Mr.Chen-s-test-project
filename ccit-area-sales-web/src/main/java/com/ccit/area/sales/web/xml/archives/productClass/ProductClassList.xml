@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="productClassList" version="1.0">
+	<panel id="entrance" autoScroll="true">
+		<treepanel id="productClassTreeList" title="产品分类" url="/webapi/archives/productClass/tree/list">
+			<column label="主键ID" prop="id" hidden="true" />
+			<column label="产品分类名称" prop="productClassName" xtype="treecolumn" flex="1"/>
+			<column label="产品分类编码" prop="productClassNo"  />
+			<column label="主副产品" prop="mainOrByproductName" />
+			<column label="是否危化品" prop="isWhpName" />
+			<column label="状态" prop="statusName" />
+			<toolbar id="productClassTreeListTb">
+				<button id="add" text="新增" iconCls="addButton" handler="CrrHandler" />
+				<button id="edit" text="修改" iconCls="editButton" handler="CrrHandler" />
+				<button id="delete" text="删除" iconCls="deleteButton" handler="CrrHandler" />
+				<button id="search" text="查询" iconCls="searchButton" handler="CrrHandler" />
+			</toolbar>
+		</treepanel>
+	</panel>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 新增事件
+			if (t.id == "add") {
+				var data = {prefixTitle: "新增"};
+				handleRoute("productClassForm", data);
+			}
+			// 修改事件
+			if (t.id == "edit") {
+				var records = Ext.getCmp("productClassTreeList").getSelectionModel().getSelection();
+				if (records.length != 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行修改!");
+					return false;
+				}
+				var data = {id: records[0].id, prefixTitle: "修改"};
+				handleRoute("productClassForm", data);
+			}
+			// 删除事件
+			if (t.id == "delete") {
+				var records = Ext.getCmp("productClassTreeList").getSelectionModel().getSelection();
+				if (records.length != 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行删除!");
+					return false;
+				}
+				handleDelConfirm("/webapi/archives/productClass/delete", records, Ext.getCmp("productClassTreeList"));
+			}
+			// 搜索事件
+			if (t.id == "search") {
+				Ext.getCmp('productClassTreeList').getStore().load({params: {parentId: 'root'}});
+			}
+		}
+	]]></script>
+</page>

@@ -1,0 +1,602 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.sales.OrderLineMapper">
+    <resultMap type="com.ccit.area.sales.dao.vo.sales.OrderLineVO" id="tOrderLineMap">
+        <result property="id" column="id"/>
+        <result property="status" column="status"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="orderLineNo" column="order_line_no"/>
+        <result property="listedNo" column="listed_no"/>
+        <result property="orderType" column="order_type"/>
+        <result property="orderSubmissionPrice" column="order_submission_price"/>
+        <result property="orderSubmissionQuantity" column="order_submission_quantity"/>
+        <result property="transactionPrice" column="transaction_price"/>
+        <result property="turnoverQuantity" column="turnover_quantity"/>
+        <result property="freight" column="freight"/>
+        <result property="benchmarkPrice" column="benchmark_price"/>
+        <result property="orderStartTime" column="order_start_time"/>
+        <result property="orderEndTime" column="order_end_time"/>
+        <result property="ddWarnDay" column="dd_warn_day"/>
+        <result property="orderApprovalTime" column="order_approval_time"/>
+        <result property="customerNo" column="customer_no"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="remark" column="remark"/>
+        <result property="workflowid" column="workflowid"/>
+        <result property="shbz" column="shbz"/>
+        <result property="companyNo" column="company_no"/>
+        <result property="companyName" column="company_name"/>
+        <result property="createBy" column="create_by"/>
+        <result property="gmtModified" column="gmt_modified"/>
+        <result property="tbStatus" column="tb_status"/>
+    </resultMap>
+    <!-- 分页列表，支持分页查询和高级查询  -->
+    <select id="selectOrder" resultType="com.ccit.area.sales.dao.vo.sales.OrderLineVO"
+            parameterType="com.ccit.area.sales.dao.vo.sales.OrderLineListVO">
+        SELECT
+        t_sales_bidding.quantity,
+        t_the_order.product_category_name AS productCategoryName,
+        t_order_line.id,
+        t_order_line.`status`,
+        t_order_line.order_no AS orderNo,
+        t_listed.materiel_no AS materielNo,
+        t_listed.materiel_name AS materielName,
+        t_sales_bidding.`status`,
+        t_order_line.order_line_no AS orderLineNo,
+        t_order_line.listed_no AS listedNo,
+        t_order_line.order_submission_price AS orderSubmissionPrice,
+        t_order_line.order_submission_quantity AS orderSubmissionQuantity,
+        t_order_line.transaction_price AS transactionPrice,
+        t_order_line.turnover_quantity AS turnoverQuantity,
+        t_order_line.freight,
+        t_order_line.benchmark_price AS benchmarkPrice,
+        t_order_line.remark,
+        t_order_line.order_start_time AS orderStartTime,
+        t_order_line.order_end_time AS orderEndTime,
+        t_order_line.order_approval_time AS orderApprovalTime,
+        t_order_line.dd_warn_day AS ddWarnDay,
+        t_order_line.customer_no AS customerNo,
+        t_order_line.customer_name AS customerName,
+        t_order_line.workflowid AS workflowid,
+        t_order_line.shbz,
+        t_order_line.company_no AS companyNo,
+        t_order_line.company_name AS companyName,
+        t_order_line.order_type AS orderType
+        FROM
+        t_order_line
+        left join t_listed on t_order_line.listed_no = t_listed.listed_no
+        left join t_sales_bidding on t_listed.listed_no = t_sales_bidding.tender_number
+        left join t_the_order on t_order_line.order_no = t_the_order.order_no
+        WHERE
+        t_order_line.is_deleted = 0
+        AND t_order_line.listed_no =#{entity.listedNo}
+        <if test="entity.companyName != null and entity.companyName != ''">
+            AND t_order_line.company_name LIKE CONCAT('%', #{entity.companyName}, '%')
+        </if>
+        ORDER BY
+        t_order_line.gmt_modified DESC
+    </select>
+
+
+    <select id="summary" resultType="com.ccit.area.sales.dao.vo.sales.OrderLineVO"
+            parameterType="com.ccit.area.sales.dao.dto.sales.OrderSummaryDTO">
+        SELECT
+        t_order_line.order_submission_quantity as orderSubmissionQuantity,
+        t_order_line.turnover_quantity as turnoverQuantity
+        FROM
+        t_order_line
+        WHERE
+        t_order_line.id in
+        <foreach item="ids" collection="entity.ids" separator="," open="(" close=")" index="">
+            #{ids}
+        </foreach>
+    </select>
+
+
+    <update id="uprefuse">
+        update
+        t_order_line
+        set status ="已拒接"
+        where
+        t_order_line.id in
+        <foreach item="ids" collection="entity.ids" separator="," open="(" close=")" index="">
+            #{ids}
+        </foreach>
+
+    </update>
+
+
+    <update id="upsubmit">
+        update
+        t_order_line
+        set status ="审核中"
+        where
+        t_order_line.id in
+        <foreach item="id" collection="entity" separator="," open="(" close=")" index="">
+            #{id}
+        </foreach>
+        and status = '待审核';
+    </update>
+
+
+    <select id="selectlist" resultType="com.ccit.area.sales.dao.vo.sales.OrderLineVO"
+            parameterType="com.ccit.area.sales.dao.dto.sales.OrderSummaryDTO">
+        SELECT
+        t_order_line.id,
+        t_order_line.`status`,
+        t_order_line.order_line_no AS orderLineNo,
+        t_order_line.listed_no AS listedNo,
+        t_order_line.order_submission_price AS orderSubmissionPrice,
+        t_order_line.order_submission_quantity AS orderSubmissionQuantity,
+        t_order_line.transaction_price AS transactionPrice,
+        t_order_line.turnover_quantity AS turnoverQuantity,
+        t_order_line.freight,
+        t_order_line.benchmark_price AS benchmarkPrice,
+        t_order_line.remark,
+        t_order_line.order_start_time AS orderStartTime,
+        t_order_line.order_end_time AS orderEndTime,
+        t_order_line.order_approval_time AS orderApprovalTime,
+        t_order_line.dd_warn_day AS ddWarnDay,
+        t_order_line.customer_no AS customerNo,
+        t_order_line.customer_name AS customerName,
+        t_order_line.workflowid AS workflowid,
+        t_order_line.shbz,
+        t_order_line.company_no AS companyNo,
+        t_order_line.company_name AS companyName,
+        t_order_line.order_type AS orderType,
+        t_listed.materiel_no AS materielNo,
+        t_listed.materiel_name AS materielName
+        FROM
+        t_order_line
+        left join
+        t_listed on t_order_line.listed_no = t_listed.listed_no
+        WHERE
+        t_order_line.id in
+        <foreach item="id" collection="id" separator="," open="(" close=")" index="">
+            #{id}
+        </foreach>
+    </select>
+
+
+    <select id="selectBystatus" resultType="com.ccit.area.sales.dao.vo.sales.OrderLineVO"
+            parameterType="com.ccit.area.sales.dao.dto.sales.OrderSummaryDTO">
+
+        SELECT
+        t_order_line.`status`
+        FROM
+        t_order_line
+        WHERE
+        t_order_line.is_deleted = 0
+        AND t_order_line.id IN
+        <foreach item="id" index="index" collection="entity.ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+
+    </select>
+
+
+    <select id="queryReview" resultType="com.ccit.area.sales.dao.vo.sales.OrderLineVO" parameterType="map">
+        SELECT
+        t_order_mould.flow_protocol AS flowprotocol,
+        t_order_mould.flow_reporting_cycle AS flowreportingcycle,
+        t_order_mould.cash_transfer_cycle AS cashtransfercycle,
+        t_order_mould.acceptance_payment_cycle AS acceptancepaymentcycle,
+        t_order_mould.mode_of_transport AS modeoftransport,
+        t_order_mould.delay_days AS delaydays,
+        t_order_mould.order_validity_days AS ordervaliditydays,
+        t_order_mould.new_terms AS newTerms,
+        t_order_line.id,
+        t_order_line.`status`,
+        t_order_line.order_line_no AS orderLineNo,
+        t_order_line.listed_no AS listedNo,
+        t_order_line.order_submission_price AS orderSubmissionPrice,
+        t_order_line.order_submission_quantity AS orderSubmissionQuantity,
+        t_order_line.transaction_price AS transactionPrice,
+        t_order_line.turnover_quantity AS turnoverQuantity,
+        t_order_line.freight,
+        t_order_line.benchmark_price AS benchmarkPrice,
+        t_order_line.remark,
+        t_order_line.order_start_time AS orderStartTime,
+        t_order_line.order_end_time AS orderEndTime,
+        t_order_line.order_approval_time AS orderApprovalTime,
+        t_order_line.dd_warn_day AS ddWarnDay,
+        t_order_line.customer_no AS customerNo,
+        t_order_line.customer_name AS customerName,
+        t_order_line.workflowid AS workflowid,
+        t_order_line.shbz,
+        t_order_line.company_no AS companyNo,
+        t_order_line.company_name AS companyName,
+        t_order_line.order_type AS orderType
+        FROM
+        t_order_line
+        left join t_order_mould on t_order_line.order_line_no = t_order_mould.order_line_no
+        WHERE
+        t_order_line.is_deleted = #{param.deleted}
+        AND t_order_line.`status` = '审核中'
+        <if test="param.status != null and param.status != ''">
+            AND t_order_line.status LIKE CONCAT('%', #{param.status}, '%')
+        </if>
+        <if test="param.orderNo != null and param.orderNo != ''">
+            AND t_order_line.order_no LIKE CONCAT('%', #{param.orderNo}, '%')
+        </if>
+        <if test="param.orderLineNo != null and param.orderLineNo != ''">
+            AND t_order_line.order_line_no LIKE CONCAT('%', #{param.orderLineNo}, '%')
+        </if>
+        <if test="param.listedNo != null and param.listedNo != ''">
+            AND t_order_line.listed_no LIKE CONCAT('%', #{param.listedNo}, '%')
+        </if>
+        <if test="param.orderSubmissionPrice != null and param.orderSubmissionPrice != ''">
+            AND t_order_line.order_submission_price LIKE CONCAT('%', #{param.orderSubmissionPrice}, '%')
+        </if>
+        <if test="param.orderSubmissionQuantity != null and param.orderSubmissionQuantity != ''">
+            AND t_order_line.order_submission_quantity LIKE CONCAT('%', #{param.orderSubmissionQuantity}, '%')
+        </if>
+        <if test="param.transactionPrice != null and param.transactionPrice != ''">
+            AND t_order_line.transaction_price LIKE CONCAT('%', #{param.transactionPrice}, '%')
+        </if>
+        <if test="param.turnoverQuantity != null and param.turnoverQuantity != ''">
+            AND t_order_line.turnover_quantity LIKE CONCAT('%', #{param.turnoverQuantity}, '%')
+        </if>
+        <if test="param.freight != null and param.freight != ''">
+            AND t_order_line.freight LIKE CONCAT('%', #{param.freight}, '%')
+        </if>
+        <if test="param.benchmarkPrice != null and param.benchmarkPrice != ''">
+            AND t_order_line.benchmark_price LIKE CONCAT('%', #{param.benchmarkPrice}, '%')
+        </if>
+        <if test="param.remark != null and param.remark != ''">
+            AND t_order_line.remark LIKE CONCAT('%', #{param.remark}, '%')
+        </if>
+        <if test="param.orderStartTime != null and param.orderStartTime != ''">
+            AND t_order_line.order_start_time LIKE CONCAT('%', #{param.orderStartTime}, '%')
+        </if>
+        <if test="param.orderEndTime != null and param.orderEndTime != ''">
+            AND t_order_line.order_end_time LIKE CONCAT('%', #{param.orderEndTime}, '%')
+        </if>
+        <if test="param.ddWarnDay != null and param.ddWarnDay != ''">
+            AND t_order_line.dd_warn_day LIKE CONCAT('%', #{param.ddWarnDay}, '%')
+        </if>
+        <if test="param.customerNo != null and param.customerNo != ''">
+            AND t_order_line.customer_no LIKE CONCAT('%', #{param.customerNo}, '%')
+        </if>
+        <if test="param.customerName != null and param.customerName != ''">
+            AND t_order_line.customer_name LIKE CONCAT('%', #{param.customerName}, '%')
+        </if>
+        <if test="param.workflowid != null and param.workflowid != ''">
+            AND t_order_line.workflowid LIKE CONCAT('%', #{param.workflowid}, '%')
+        </if>
+        <if test="param.shbz != null and param.shbz != ''">
+            AND t_order_line.shbz LIKE CONCAT('%', #{param.shbz}, '%')
+        </if>
+        <if test="param.companyNo != null and param.companyNo != ''">
+            AND t_order_line.company_no LIKE CONCAT('%', #{param.companyNo}, '%')
+        </if>
+        <if test="param.companyName != null and param.companyName != ''">
+            AND t_order_line.company_name LIKE CONCAT('%', #{param.companyName}, '%')
+        </if>
+        ORDER BY
+        t_order_line.gmt_modified DESC
+    </select>
+
+
+    <update id="reviewAll">
+        UPDATE
+        t_order_line
+        SET status =#{entity.status}
+        WHERE t_order_line.id in
+        <foreach item="ids" collection="entity.ids" separator="," open="(" close=")" index="">
+            #{ids}
+        </foreach>
+
+    </update>
+
+
+    <select id="orderDetails" resultType="com.ccit.area.sales.dao.vo.sales.OrderLineVO" parameterType="map">
+
+        SELECT
+        t_order_mould.flow_protocol AS flowprotocol,
+        t_order_mould.flow_reporting_cycle AS flowreportingcycle,
+        t_order_mould.cash_transfer_cycle AS cashtransfercycle,
+        t_order_mould.acceptance_payment_cycle AS acceptancepaymentcycle,
+        t_order_mould.mode_of_transport AS modeoftransport,
+        t_order_mould.delay_days AS delaydays,
+        t_order_mould.order_validity_days AS ordervaliditydays,
+        t_order_mould.new_terms AS newTerms,
+        t_order_line.id,
+        t_order_line.`status`,
+        t_order_line.order_line_no AS orderLineNo,
+        t_order_line.listed_no AS listedNo,
+        t_order_line.order_no AS orderNo,
+        t_order_line.order_submission_price AS orderSubmissionPrice,
+        t_order_line.order_submission_quantity AS orderSubmissionQuantity,
+        t_order_line.transaction_price AS transactionPrice,
+        t_order_line.turnover_quantity AS turnoverQuantity,
+        t_order_line.freight,
+        t_order_line.benchmark_price AS benchmarkPrice,
+        t_order_line.remark,
+        t_order_line.order_start_time AS orderStartTime,
+        t_order_line.order_end_time AS orderEndTime,
+        t_order_line.order_approval_time AS orderApprovalTime,
+        t_order_line.dd_warn_day AS ddWarnDay,
+        t_order_line.customer_no AS customerNo,
+        t_order_line.customer_name AS customerName,
+        t_order_line.workflowid AS workflowid,
+        t_order_line.shbz,
+        t_order_line.company_no AS companyNo,
+        t_order_line.company_name AS companyName,
+        t_order_line.create_by AS createBy,
+        t_order_line.order_type AS orderType,
+        t_listed.product_class_name AS productClassName,
+        t_listed.materiel_no AS materielNo,
+        t_listed.materiel_name AS materielName
+        FROM
+        t_order_line
+        left join t_order_mould on t_order_line.order_line_no = t_order_mould.order_line_no
+        left join t_listed on t_listed.listed_no = t_order_line.listed_no
+        WHERE
+        t_order_line.is_deleted = #{param.deleted}
+        <if test="param.orgNoList != null and param.orgNoList != ''">
+            AND t_order_line.company_no IN
+            <foreach item="item" index="index" collection="param.orgNoList"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="param.status != null and param.status != ''">
+            AND t_order_line.status LIKE CONCAT('%', #{param.status}, '%')
+        </if>
+        <if test="param.orderNo != null and param.orderNo != ''">
+            AND t_order_line.order_no LIKE CONCAT('%', #{param.orderNo}, '%')
+        </if>
+        <if test="param.orderLineNo != null and param.orderLineNo != ''">
+            AND t_order_line.order_line_no LIKE CONCAT('%', #{param.orderLineNo}, '%')
+        </if>
+        <if test="param.listedNo != null and param.listedNo != ''">
+            AND t_order_line.listed_no LIKE CONCAT('%', #{param.listedNo}, '%')
+        </if>
+        <if test="param.orderSubmissionPrice != null and param.orderSubmissionPrice != ''">
+            AND t_order_line.order_submission_price LIKE CONCAT('%', #{param.orderSubmissionPrice}, '%')
+        </if>
+        <if test="param.orderSubmissionQuantity != null and param.orderSubmissionQuantity != ''">
+            AND t_order_line.order_submission_quantity LIKE CONCAT('%', #{param.orderSubmissionQuantity}, '%')
+        </if>
+        <if test="param.transactionPrice != null and param.transactionPrice != ''">
+            AND t_order_line.transaction_price LIKE CONCAT('%', #{param.transactionPrice}, '%')
+        </if>
+        <if test="param.turnoverQuantity != null and param.turnoverQuantity != ''">
+            AND t_order_line.turnover_quantity LIKE CONCAT('%', #{param.turnoverQuantity}, '%')
+        </if>
+        <if test="param.freight != null and param.freight != ''">
+            AND t_order_line.freight LIKE CONCAT('%', #{param.freight}, '%')
+        </if>
+        <if test="param.benchmarkPrice != null and param.benchmarkPrice != ''">
+            AND t_order_line.benchmark_price LIKE CONCAT('%', #{param.benchmarkPrice}, '%')
+        </if>
+        <if test="param.remark != null and param.remark != ''">
+            AND t_order_line.remark LIKE CONCAT('%', #{param.remark}, '%')
+        </if>
+        <if test="param.orderStartTime != null and param.orderStartTime != ''">
+            AND t_order_line.order_start_time LIKE CONCAT('%', #{param.orderStartTime}, '%')
+        </if>
+        <if test="param.orderEndTime != null and param.orderEndTime != ''">
+            AND t_order_line.order_end_time LIKE CONCAT('%', #{param.orderEndTime}, '%')
+        </if>
+        <if test="param.ddWarnDay != null and param.ddWarnDay != ''">
+            AND t_order_line.dd_warn_day LIKE CONCAT('%', #{param.ddWarnDay}, '%')
+        </if>
+        <if test="param.customerNo != null and param.customerNo != ''">
+            AND t_order_line.customer_no LIKE CONCAT('%', #{param.customerNo}, '%')
+        </if>
+        <if test="param.customerName != null and param.customerName != ''">
+            AND t_order_line.customer_name LIKE CONCAT('%', #{param.customerName}, '%')
+        </if>
+        <if test="param.workflowid != null and param.workflowid != ''">
+            AND t_order_line.workflowid LIKE CONCAT('%', #{param.workflowid}, '%')
+        </if>
+        <if test="param.shbz != null and param.shbz != ''">
+            AND t_order_line.shbz LIKE CONCAT('%', #{param.shbz}, '%')
+        </if>
+        <if test="param.companyNo != null and param.companyNo != ''">
+            AND t_order_line.company_no LIKE CONCAT('%', #{param.companyNo}, '%')
+        </if>
+        <if test="param.companyName != null and param.companyName != ''">
+            AND t_order_line.company_name LIKE CONCAT('%', #{param.companyName}, '%')
+        </if>
+        <if test="param.orderApprovalTime != null and param.orderApprovalTime != ''">
+            AND t_order_line.order_approval_time LIKE CONCAT('%', #{param.orderApprovalTime}, '%')
+        </if>
+        <if test="param.productClassName != null and param.productClassName != ''">
+            AND t_listed.product_class_name LIKE CONCAT('%', #{param.productClassName}, '%')
+        </if>
+        ORDER BY
+        t_order_line.gmt_create DESC
+    </select>
+
+
+    <select id="detailedSummary" resultType="com.ccit.area.sales.dao.vo.sales.OrderLineVO"
+            parameterType="com.ccit.area.sales.dao.dto.sales.OrderSummaryDTO">
+        SELECT
+        t_order_line.turnover_quantity as turnoverQuantity
+        FROM
+        t_order_line
+        WHERE
+        t_order_line.id in
+        <foreach item="ids" collection="entity.ids" separator="," open="(" close=")" index="">
+            #{ids}
+        </foreach>
+    </select>
+
+
+    <update id="uplist" parameterType="java.util.List">
+        UPDATE t_order_line
+        SET
+        transaction_price = CASE
+        <foreach collection="entity" item="item" separator=" ">
+            WHEN id = #{item.id} THEN #{item.transactionPrice}
+        </foreach>
+        END,
+        turnover_quantity = CASE
+        <foreach collection="entity" item="item" separator=" ">
+            WHEN id = #{item.id} THEN #{item.turnoverQuantity}
+        </foreach>
+        END
+        WHERE id IN
+        <foreach collection="entity" item="item" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+
+    <select id="selectMaterielno" resultType="com.ccit.area.sales.dao.vo.sales.OrderMouldnoVO" parameterType="map">
+        SELECT
+        t_the_order.product_category_name as productCategoryName
+        FROM
+        t_the_order
+        LEFT JOIN t_order_line ON t_the_order.order_no = t_order_line.order_no
+        WHERE
+        t_the_order.is_deleted = 0
+        AND t_the_order.order_no IN
+        <foreach item="item" index="index" collection="orderNo" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <select id="selectOrderLine" resultType="com.ccit.area.sales.dao.vo.sales.OrderLineVO" parameterType="map">
+        SELECT
+        t_order_mould.order_line_no AS orderLineNo
+        FROM
+        t_order_mould
+        WHERE
+        t_order_mould.is_deleted = 0
+        AND t_order_mould.order_line_no IN
+        <foreach item="item" index="index" collection="orderLineNo" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="orderDetail" resultType="com.ccit.area.sales.dao.vo.sales.OrderLineVO"
+            parameterType="com.ccit.area.sales.dao.dto.sales.OrderLineDTO">
+        SELECT t_order_mould.flow_protocol            AS flowprotocol,
+               t_order_mould.flow_reporting_cycle     AS flowreportingcycle,
+               t_order_mould.cash_transfer_cycle      AS cashtransfercycle,
+               t_order_mould.acceptance_payment_cycle AS acceptancepaymentcycle,
+               t_order_mould.mode_of_transport        AS modeoftransport,
+               t_order_mould.delay_days               AS delaydays,
+               t_order_mould.order_validity_days      AS ordervaliditydays,
+               t_order_mould.new_terms                AS newTerms,
+               t_order_line.id,
+               t_order_line.`status`,
+               t_order_line.order_line_no             AS orderLineNo,
+               t_order_line.listed_no                 AS listedNo,
+               t_order_line.order_no                  AS orderNo,
+               t_order_line.order_submission_price    AS orderSubmissionPrice,
+               t_order_line.order_submission_quantity AS orderSubmissionQuantity,
+               t_order_line.transaction_price         AS transactionPrice,
+               t_order_line.turnover_quantity         AS turnoverQuantity,
+               t_order_line.freight,
+               t_order_line.benchmark_price           AS benchmarkPrice,
+               t_order_line.remark,
+               t_order_line.order_start_time          AS orderStartTime,
+               t_order_line.order_end_time            AS orderEndTime,
+               t_order_line.dd_warn_day               AS ddWarnDay,
+               t_order_line.order_approval_time       AS orderApprovalTime,
+               t_order_line.customer_no               AS customerNo,
+               t_order_line.customer_name             AS customerName,
+               t_order_line.workflowid                AS workflowid,
+               t_order_line.shbz,
+               t_order_line.company_no                AS companyNo,
+               t_order_line.company_name              AS companyName,
+               t_order_line.create_by                 AS createBy,
+               t_order_line.order_type                AS orderType,
+               t_listed.product_class_name            AS productClassName
+        FROM t_order_line
+                 left join t_order_mould on t_order_line.order_line_no = t_order_mould.order_line_no
+                 left join t_listed on t_order_line.listed_no = t_listed.listed_no
+        WHERE t_order_line.is_deleted = 0
+          AND t_order_line.order_line_no = #{orderLineNo}
+    </select>
+
+    <select id="orderID" resultType="com.ccit.area.sales.dao.vo.sales.OrderLineVO"
+            parameterType="com.ccit.area.sales.dao.dto.sales.OrderLineDTO">
+        select t_order_line.order_line_no AS orderLineNo
+        from t_order_line
+        WHERE t_order_line.id = #{id}
+
+    </select>
+
+
+    <select id="getPdf" resultType="com.ccit.area.sales.dao.vo.sales.OrderLineVO"
+            parameterType="com.ccit.area.sales.dao.dto.sales.OrderLineDTO">
+        SELECT t_listed.materiel_name                 AS materielName,
+               t_listed.listed_amount                 AS listedAmount,
+               t_listed.listed_tax_price              AS listedTaxPrice,
+               t_listed.area_name                     AS areaName,
+               t_order_mould.cash_transfer_cycle      AS cashtransfercycle,
+               t_order_mould.acceptance_payment_cycle AS acceptancepaymentcycle,
+               t_order_line.company_no                AS companyNo,
+               t_order_line.transaction_price         AS transactionPrice,
+               t_order_line.turnover_quantity         AS turnoverQuantity,
+               t_order_line.workflowid,
+               t_order_line.id,
+               t_order_line.`status`,
+               t_order_line.order_approval_time AS orderApprovalTime,
+               t_order_line.order_no                  AS orderNo,
+               t_order_line.order_type                AS orderType,
+               t_order_line.gmt_modified              AS gmtModified
+        FROM t_order_line
+                 left join t_order_mould on t_order_line.order_line_no = t_order_mould.order_line_no
+                 LEFT JOIN t_listed ON t_listed.listed_no = t_order_line.listed_no
+        WHERE t_order_line.is_deleted = 0
+          AND t_order_line.order_line_no = #{orderLineNo}
+    </select>
+
+    <select id="getDing" resultType="com.ccit.area.sales.dao.vo.sales.OrderLineVO">
+        SELECT tl.id,
+               tl.status,
+               tl.order_line_no,
+               tl.order_no,
+               tl.listed_no,
+               tl.order_type,
+               tl.order_submission_price,
+               tl.order_submission_quantity,
+               tl.transaction_price,
+               tl.turnover_quantity,
+               tl.customer_name,
+               td.materiel_name
+        FROM t_order_line tl
+                 JOIN
+             t_listed td ON tl.listed_no = td.listed_no
+        WHERE tl.id = #{id}
+    </select>
+
+    <select id="getlineVo" resultType="com.ccit.area.sales.dao.vo.sales.OrderLineVO">
+        SELECT tl.id,
+               tl.status,
+               tl.order_line_no,
+               tl.order_no,
+               tl.listed_no,
+               tl.order_type,
+               tl.order_submission_price,
+               tl.order_submission_quantity,
+               tl.transaction_price,
+               tl.turnover_quantity,
+               tl.customer_name,
+               ts.materiel_name
+        FROM t_order_line tl
+                 JOIN
+             t_sales_bidding ts
+             ON tl.listed_no = ts.tender_number
+        WHERE tl.id = #{id}
+    </select>
+
+    <select id="querySHWCReview" resultMap="tOrderLineMap">
+        SELECT *
+        FROM t_order_line
+        <where>
+            and is_deleted = 0
+            <if test="param.status != null and param.status != ''">
+                AND status LIKE CONCAT('%', #{param.status}, '%')
+            </if>
+        </where>
+
+    </select>
+</mapper>

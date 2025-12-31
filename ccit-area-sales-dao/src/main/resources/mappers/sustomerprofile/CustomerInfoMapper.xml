@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.customerprofile.CustomerInfoMapper">
+
+    <select id="selectCompanyInfoUpdatePageList" resultType="com.ccit.area.sales.dao.vo.customer.TCompanyInfoUpdateVO">
+        select
+        id,
+        company_name,
+        business_license_number,
+        corporate_nature,
+        registration_address,
+        registration_funds,
+        status,
+        resource_locking_status,
+        blacklist,
+        create_time
+        from t_company_info
+        <where>
+            is_deleted = #{param.is_deleted}
+            <if test="param.companyName != null and param.companyName != ''">
+                and company_name LIKE CONCAT('%', #{param.companyName}, '%')
+            </if>
+            <if test="param.businessLicenseNumber != null and param.businessLicenseNumber != ''">
+                and business_license_number LIKE CONCAT('%', #{param.businessLicenseNumber}, '%')
+            </if>
+            <if test="param.corporateNature != null and param.corporateNature != ''">
+                and corporate_nature LIKE CONCAT('%', #{param.corporateNature}, '%')
+            </if>
+            <if test="param.registrationAddress != null and param.registrationAddress != ''">
+                and registration_address LIKE CONCAT('%', #{param.registrationAddress}, '%')
+            </if>
+            <if test="param.registrationFunds != null and param.registrationFunds != ''">
+                and registration_funds LIKE CONCAT('%', #{param.registrationFunds}, '%')
+            </if>
+            <if test="param.status != null and param.status != ''">
+                and status LIKE CONCAT('%', #{param.status}, '%')
+            </if>
+            <if test="param.resourceLockingStatus != null and param.resourceLockingStatus != ''">
+                and resource_locking_status LIKE CONCAT('%', #{param.resourceLockingStatus}, '%')
+            </if>
+            <if test="param.blacklist != null and param.blacklist != ''">
+                and blacklist LIKE CONCAT('%', #{param.blacklist}, '%')
+            </if>
+            <if test="param.createTime != null">
+                and create_time LIKE CONCAT('%', #{param.createTime}, '%')
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.customer.CustomerVO">
+        select
+        id,
+        customer_no,
+        customer_name,
+        login_account,
+        business_license_no,
+        business_license_date,
+        enterprise_nature,
+        registered_address,
+        fname,
+        idnumber,
+        fphone,
+        bank_account,
+        account_number,
+        company_no,
+        company_name,
+        status
+        from t_customer
+        <where>
+            status = #{param.status}
+            and is_deleted = #{param.is_deleted}
+            <if test="param.customerNo != null and param.customerNo != ''">
+                and customer_no LIKE CONCAT('%', #{param.customerNo}, '%')
+            </if>
+            <if test="param.customerName != null and param.customerName != ''">
+                and customer_name LIKE CONCAT('%', #{param.customerName}, '%')
+            </if>
+            <if test="param.loginAccount != null and param.loginAccount != ''">
+                and login_account LIKE CONCAT('%', #{param.loginAccount}, '%')
+            </if>
+            <if test="param.businessLicenseNo != null and param.businessLicenseNo != ''">
+                and business_license_no LIKE CONCAT('%', #{param.businessLicenseNo}, '%')
+            </if>
+            <if test="param.businessLicenseDate != null and param.businessLicenseDate != ''">
+                and business_license_date LIKE CONCAT('%', #{param.businessLicenseDate}, '%')
+            </if>
+            <if test="param.enterpriseNature != null and param.enterpriseNature != ''">
+                and enterprise_nature LIKE CONCAT('%', #{param.enterpriseNature}, '%')
+            </if>
+            <if test="param.registeredAddress != null and param.registeredAddress != ''">
+                and registered_address LIKE CONCAT('%', #{param.registeredAddress}, '%')
+            </if>
+            <if test="param.fname != null and param.fname!=''">
+                and fname LIKE CONCAT('%', #{param.fname}, '%')
+            </if>
+            <if test="param.idnumber != null and param.idnumber!=''">
+                and idnumber LIKE CONCAT('%', #{param.idnumber}, '%')
+            </if>
+            <if test="param.fphone != null and param.fphone!=''">
+                and fphone LIKE CONCAT('%', #{param.fphone}, '%')
+            </if>
+            <if test="param.bankAccount != null and param.bankAccount != ''">
+                and bank_account LIKE CONCAT('%', #{param.bankAccount}, '%')
+            </if>
+            <if test="param.accountNumber != null and param.accountNumber != ''">
+                and account_number LIKE CONCAT('%', #{param.accountNumber}, '%')
+            </if>
+            <if test="param.companyNo != null and param.companyNo != ''">
+                and company_no LIKE CONCAT('%', #{param.companyNo}, '%')
+            </if>
+            <if test="param.companyName != null and param.companyName != ''">
+                and company_name LIKE CONCAT('%', #{param.companyName}, '%')
+            </if>
+        </where>
+        <if test="param.field != null and param.sortType != null">
+            ORDER BY ${param.field} ${param.sortType}
+        </if>
+    </select>
+
+</mapper>

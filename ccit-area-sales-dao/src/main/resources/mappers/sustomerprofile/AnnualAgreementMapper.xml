@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.customerprofile.AnnualAgreementMapper">
+
+    <select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.customer.TAnnualAgreementVO">
+        SELECT
+        id,
+        annual,
+        customer_name,
+        user_name,
+        created_at,
+        review_status,
+        review_reject_reason,
+        attachment_id
+        from
+        t_annual_agreement
+        <where>
+            is_deleted = #{param.is_deleted}
+            <if test="param.annual != null and param.annual != ''">
+                AND annual = #{param.annual}
+            </if>
+            <if test="param.customerName != null and param.customerName != ''">
+                AND customer_name LIKE CONCAT('%', #{param.customerName}, '%')
+            </if>
+            <if test="param.userName != null and param.userName != ''">
+                AND user_name LIKE CONCAT('%', #{param.userName}, '%')
+            </if>
+            <if test="param.createdAt != null and param.createdAt != ''">
+                AND created_at LIKE CONCAT('%', #{param.createdAt}, '%')
+            </if>
+            <if test="param.reviewStatus != null and param.reviewStatus != ''">
+                AND review_status LIKE CONCAT('%', #{param.reviewStatus}, '%')
+            </if>
+            <if test="param.reviewRejectReason != null and param.reviewRejectReason != ''">
+                AND review_reject_reason LIKE CONCAT('%', #{param.reviewRejectReason}, '%')
+            </if>
+            <if test="param.attachmentId != null and param.attachmentId != ''">
+                AND attachment_id = #{param.attachment_id}
+            </if>
+        </where>
+    </select>
+</mapper>

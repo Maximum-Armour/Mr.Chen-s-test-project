@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="depotForm" version="1.0">
+	<window id="depotFormWin" title="仓库档案" autoScroll="true">
+		<formpanel id="depotForm" columns="1" method="/webapi/archives/depot/get?id=#{id}">
+			<formwidget xtype="filesetBegin" title="基本信息" columns="4"/>
+			<formwidget fieldLabel="主键ID" fieldProp="id" xtype="textfield" hidden="true" allowBlank="true" />
+			<formwidget fieldLabel="仓库编码" fieldProp="depotNo" xtype="textfield" />
+			<formwidget fieldLabel="仓库名称" fieldProp="depotName" xtype="textfield" />
+			<formwidget fieldLabel="仓库排序" fieldProp="depotOrders" xtype="numberfield" />
+			<formwidget fieldLabel="父分类ID" fieldProp="parentId" xtype="textfield" hidden="true" allowBlank="true" />
+			<formwidget fieldLabel="父分类" fieldProp="parentName" xtype="treecombo" url="/webapi/archives/depot/tree/list" 
+				text="depotName" callback="setParent" expands="getParent" firstRoot="{text: '根目录', id: 0, leaf: true}" />
+			<formwidget fieldLabel="是否港口" fieldProp="isPort" xtype="combo" key="port" value="N" />
+			<formwidget fieldLabel="是否中转库" fieldProp="isTransit" xtype="combo" key="transit" value="N" />
+			<formwidget fieldLabel="仓库地址" fieldProp="depotAddress" xtype="textfield" />
+			<formwidget fieldLabel="省份编码" fieldProp="provinceNo" xtype="textfield" />
+			<formwidget fieldLabel="省份名称" fieldProp="provinceName" xtype="textfield" />
+			<formwidget fieldLabel="市区编码" fieldProp="cityNo" xtype="textfield" />
+			<formwidget fieldLabel="市区名称" fieldProp="cityName" xtype="textfield" />
+			<formwidget fieldLabel="区县编码" fieldProp="countyNo" xtype="textfield" />
+			<formwidget fieldLabel="区县名称" fieldProp="countyName" xtype="textfield" />
+			<formwidget fieldLabel="管理员" fieldProp="manager" xtype="textfield" />
+			<formwidget fieldLabel="管理员联系电话" fieldProp="managerTelephone" xtype="textfield"  />
+			<formwidget fieldLabel="状态" fieldProp="status" xtype="combo" key="status" value="SY" />
+			<formwidget xtype="filesetEnd" />
+			<formwidget xtype="filesetBegin" title="制单用户信息" columns="4"/>
+			<formwidget fieldLabel="制单人" fieldProp="createByName" xtype="displayfield" />
+			<formwidget fieldLabel="制单时间" fieldProp="gmtCreate" xtype="displayfield" />
+			<formwidget fieldLabel="单位名称" fieldProp="orgName" xtype="displayfield" />
+			<formwidget fieldLabel="部门名称" fieldProp="deptName" xtype="displayfield" />
+			<formwidget fieldLabel="最后修改人" fieldProp="updateByName" xtype="displayfield" />
+			<formwidget fieldLabel="最后修改时间" fieldProp="gmtModified" xtype="displayfield" />
+			<formwidget xtype="filesetEnd" />
+		</formpanel>
+		<button id="save" text="保存" iconCls="saveButton" handler="CrrHandler" />
+	</window>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 保存&更新事件
+			if (t.id == "save") {
+				if (Ext.getCmp('depotForm').getForm().isValidCux()) {
+					var data = Ext.getCmp("depotForm").getForm().getValues();
+					var url = "/webapi/archives/depot/add";
+					if (data.id != null && data.id != "") {
+						url = "/webapi/archives/depot/edit";
+					}
+					post(url, data, function(res) {
+						Ext.MessageBox.alert("提示", res.msg);
+						Ext.getCmp('depotTreeList').getStore().load({params: {parentId: 'root'}});
+						Ext.getCmp('depotFormWin').close();
+					});
+				}
+			}
+		}
+		// 父分类赋值
+		function setParent(data) {
+			Ext.getCmp("depotForm").getForm().findField("parentId").setValue(data.parentId);
+		}
+		// 获取父分类值
+		function getParent() {
+			var form = Ext.getCmp("depotForm").getForm();
+			var data = {
+				id: form.findField("id").getValue(),
+				parentId: form.findField("parentId").getValue()
+			}
+			return data;
+		}
+	]]></script>
+</page>

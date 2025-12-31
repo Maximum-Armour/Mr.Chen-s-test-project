@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.system.SystemDictMapper">
+
+    <select id="childrenCount" resultType="java.lang.Long">
+        select COUNT(id)
+        from t_system_dict
+        where t_system_dict.parent_id = #{id}
+    </select>
+
+    <select id="selectChildren" resultType="com.ccit.area.sales.dao.vo.system.SystemDictTreeVO">
+        select
+            t_system_dict.id,
+            t_system_dict.dict_code AS dictCode,
+            t_system_dict.dict_name AS dictName,
+            t_system_dict.dict_value AS dictValue,
+            t_system_dict.status AS status
+        from t_system_dict
+        where t_system_dict.parent_id = #{id}
+        and t_system_dict.is_deleted = 0
+    </select>
+</mapper>

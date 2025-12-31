@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.marketing.PriceSchemeItemMapper">
+
+	<!-- 分页列表，支持分页查询和高级查询 -->
+	<select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.marketing.PriceSchemeItemPageListVO">
+		SELECT
+			t_price_scheme_item.id,
+			t_price_scheme_item.`status`,
+			t_price_scheme_item.scheme_no AS schemeNo,
+			t_price_scheme_item.scheme_item_no AS schemeItemNo,
+			t_price_scheme_item.area_no AS areaNo,
+			t_price_scheme_item.area_name AS areaName,
+			t_price_scheme_item.delivery_place_no AS deliveryPlaceNo,
+			t_price_scheme_item.delivery_place_name AS deliveryPlaceName,
+			t_price_scheme_item.delivery_place_class_no AS deliveryPlaceClassNo,
+			t_price_scheme_item.delivery_place_class_name AS deliveryPlaceClassName,
+			t_price_scheme_item.distribution_way AS distributionWay,
+			t_price_scheme_item.transport_way AS transportWay,
+			t_price_scheme_item.pay_way AS payWay,
+			t_price_scheme_item.currency,
+			t_price_scheme_item.unit,
+			t_price_scheme_item.org_no AS orgNo,
+			t_price_scheme_item.org_name AS orgName
+		FROM
+			t_price_scheme_item
+		WHERE
+			t_price_scheme_item.is_deleted = 0
+		<if test="id != null and id != ''">
+			AND	t_price_scheme_item.scheme_no = (
+				SELECT
+					t_price_scheme.scheme_no
+				FROM
+					t_price_scheme
+				WHERE
+					t_price_scheme.id = #{id}
+			)
+		</if>
+		<if test="orgNo != null and orgNo != ''">
+			AND t_price_scheme_item.org_no LIKE CONCAT('%', #{orgNo}, '%')
+		</if>
+		<if test="schemeNo != null and schemeNo != ''">
+			AND t_price_scheme_item.scheme_no LIKE CONCAT('%', #{schemeNo}, '%')
+		</if>
+		<if test="schemeItemNo != null and schemeItemNo != ''">
+			AND t_price_scheme_item.scheme_item_no LIKE CONCAT('%', #{schemeItemNo}, '%')
+		</if>
+		<if test="areaNo != null and areaNo != ''">
+			AND t_price_scheme_item.area_no LIKE CONCAT('%', #{areaNo}, '%')
+		</if>
+		<if test="areaName != null and areaName != ''">
+			AND t_price_scheme_item.area_name LIKE CONCAT('%', #{areaName}, '%')
+		</if>
+		<if test="deliveryPlaceNo != null and deliveryPlaceNo != ''">
+			AND t_price_scheme_item.delivery_place_no LIKE CONCAT('%', #{deliveryPlaceNo}, '%')
+		</if>
+		<if test="deliveryPlaceName != null and deliveryPlaceName != ''">
+			AND t_price_scheme_item.delivery_place_name LIKE CONCAT('%', #{deliveryPlaceName}, '%')
+		</if>
+		<if test="deliveryPlaceClassNo != null and deliveryPlaceClassNo != ''">
+			AND t_price_scheme_item.delivery_place_class_no LIKE CONCAT('%', #{deliveryPlaceClassNo}, '%')
+		</if>
+		<if test="deliveryPlaceClassName != null and deliveryPlaceClassName != ''">
+			AND t_price_scheme_item.delivery_place_class_name LIKE CONCAT('%', #{deliveryPlaceClassName}, '%')
+		</if>
+		<if test="distributionWay != null and distributionWay != ''">
+			AND t_price_scheme_item.distribution_way LIKE CONCAT('%', #{distributionWay}, '%')
+		</if>
+		<if test="transportWay != null and transportWay != ''">
+			AND t_price_scheme_item.transport_way LIKE CONCAT('%', #{transportWay}, '%')
+		</if>
+		<if test="payWay != null and payWay != ''">
+			AND t_price_scheme_item.pay_way LIKE CONCAT('%', #{payWay}, '%')
+		</if>
+		<if test="currency != null and currency != ''">
+			AND t_price_scheme_item.currency LIKE CONCAT('%', #{currency}, '%')
+		</if>
+		<if test="unit != null and unit != ''">
+			AND t_price_scheme_item.unit LIKE CONCAT('%', #{unit}, '%')
+		</if>
+		<if test="notIdList != null and notIdList != '' and notIdList.size() > 0">
+			AND t_price_scheme_item.id NOT IN 
+			<foreach item="id" collection="notIdList" separator="," open="(" close=")" index="">
+				#{id}
+			</foreach>
+		</if>
+		ORDER BY
+			t_price_scheme_item.id desc
+	</select>
+
+	<!-- 分页列表，支持分页查询和高级查询 -->
+	<select id="selectItemList" resultType="com.ccit.area.sales.dao.vo.marketing.PriceSchemeItemPageListVO" parameterType="map">
+		SELECT
+		t_price_scheme_item.id,
+		t_price_scheme_item.`status`,
+		t_price_scheme_item.scheme_no AS schemeNo,
+		t_price_scheme_item.scheme_item_no AS schemeItemNo,
+		t_price_scheme_item.area_no AS areaNo,
+		t_price_scheme_item.area_name AS areaName,
+		t_price_scheme_item.delivery_place_no AS deliveryPlaceNo,
+		t_price_scheme_item.delivery_place_name AS deliveryPlaceName,
+		t_price_scheme_item.delivery_place_class_no AS deliveryPlaceClassNo,
+		t_price_scheme_item.delivery_place_class_name AS deliveryPlaceClassName,
+		t_price_scheme_item.distribution_way AS distributionWay,
+		t_price_scheme_item.transport_way AS transportWay,
+		t_price_scheme_item.pay_way AS payWay,
+		t_price_scheme_item.currency,
+		t_price_scheme_item.unit,
+		t_price_scheme_item.org_no AS orgNo,
+		t_price_scheme_item.org_name AS orgName
+		FROM
+		t_price_scheme_item
+		LEFT JOIN t_system_user
+		ON t_price_scheme_item.create_by = t_system_user.id
+		LEFT JOIN t_price_scheme
+		ON t_price_scheme_item.scheme_no = t_price_scheme.scheme_no
+		WHERE
+		t_price_scheme_item.is_deleted = 0
+		AND t_price_scheme.org_no IN
+		<foreach item="item" index="index" collection="param.orgNoList"
+				 open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		  AND t_price_scheme.status = '审核完成'
+		<if test="param.id != null and param.id != ''">
+			AND	t_price_scheme_item.scheme_no = (
+			SELECT
+			t_price_scheme.scheme_no
+			FROM
+			t_price_scheme
+			WHERE
+			t_price_scheme.id = #{param.id}
+			)
+		</if>
+		<if test="param.userName != null and param.userName != ''">
+			AND t_system_user.user_name LIKE CONCAT('%', #{param.userName}, '%')
+		</if>
+		<if test="param.orgNo != null and param.orgNo != ''">
+			AND t_price_scheme_item.org_no LIKE CONCAT('%', #{param.orgNo}, '%')
+		</if>
+		<if test="param.status != null and param.status != ''">
+			AND t_price_scheme_item.`status` LIKE CONCAT('%', #{param.status}, '%')
+		</if>
+		<if test="param.schemeNo != null and param.schemeNo != ''">
+			AND t_price_scheme_item.scheme_no LIKE CONCAT('%', #{param.schemeNo}, '%')
+		</if>
+		<if test="param.schemeItemNo != null and param.schemeItemNo != ''">
+			AND t_price_scheme_item.scheme_item_no LIKE CONCAT('%', #{param.schemeItemNo}, '%')
+		</if>
+		<if test="param.areaNo != null and param.areaNo != ''">
+			AND t_price_scheme_item.area_no LIKE CONCAT('%', #{param.areaNo}, '%')
+		</if>
+		<if test="param.areaName != null and param.areaName != ''">
+			AND t_price_scheme_item.area_name LIKE CONCAT('%', #{param.areaName}, '%')
+		</if>
+		<if test="param.deliveryPlaceNo != null and param.deliveryPlaceNo != ''">
+			AND t_price_scheme_item.delivery_place_no LIKE CONCAT('%', #{param.deliveryPlaceNo}, '%')
+		</if>
+		<if test="param.deliveryPlaceName != null and param.deliveryPlaceName != ''">
+			AND t_price_scheme_item.delivery_place_name LIKE CONCAT('%', #{param.deliveryPlaceName}, '%')
+		</if>
+		<if test="param.deliveryPlaceClassNo != null and param.deliveryPlaceClassNo != ''">
+			AND t_price_scheme_item.delivery_place_class_no LIKE CONCAT('%', #{param.deliveryPlaceClassNo}, '%')
+		</if>
+		<if test="param.deliveryPlaceClassName != null and param.deliveryPlaceClassName != ''">
+			AND t_price_scheme_item.delivery_place_class_name LIKE CONCAT('%', #{param.deliveryPlaceClassName}, '%')
+		</if>
+		<if test="param.distributionWay != null and param.distributionWay != ''">
+			AND t_price_scheme_item.distribution_way LIKE CONCAT('%', #{param.distributionWay}, '%')
+		</if>
+		<if test="param.transportWay != null and param.transportWay != ''">
+			AND t_price_scheme_item.transport_way LIKE CONCAT('%', #{param.transportWay}, '%')
+		</if>
+		<if test="param.payWay != null and param.payWay != ''">
+			AND t_price_scheme_item.pay_way LIKE CONCAT('%', #{param.payWay}, '%')
+		</if>
+		<if test="param.currency != null and param.currency != ''">
+			AND t_price_scheme_item.currency LIKE CONCAT('%', #{param.currency}, '%')
+		</if>
+		<if test="param.unit != null and param.unit != ''">
+			AND t_price_scheme_item.unit LIKE CONCAT('%', #{param.unit}, '%')
+		</if>
+		<if test="param.orgName != null and param.orgName != ''">
+			AND t_price_scheme_item.org_name LIKE CONCAT('%', #{param.orgName}, '%')
+		</if>
+		<if test="param.notIdList != null and param.notIdList != '' and param.notIdList.size() > 0">
+			AND t_price_scheme_item.id NOT IN
+			<foreach item="id" collection="param.notIdList" separator="," open="(" close=")" index="">
+				#{id}
+			</foreach>
+		</if>
+		ORDER BY
+		t_price_scheme_item.id desc
+	</select>
+
+	<insert id="insertPriceSchemeItem">
+		<selectKey keyProperty="id" resultType="java.lang.Integer" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO t_price_scheme_item (scheme_no, scheme_item_no, area_name, delivery_place_name, delivery_place_class_name, distribution_way, transport_way, pay_way, currency, unit, gmt_create, gmt_modified)
+		VALUES (#{schemeNo}, #{schemeItemNo}, #{areaName}, #{deliveryPlaceName}, #{deliveryPlaceClassName}, #{distributionWay}, #{transportWay}, #{payWay}, #{currency}, #{unit}, #{gmtCreate}, #{gmtModified})
+	</insert>
+</mapper>

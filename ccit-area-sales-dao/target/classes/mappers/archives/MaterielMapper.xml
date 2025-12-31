@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.archives.MaterielMapper">
+
+	<!-- 分页列表，支持分页查询和高级查询  -->
+	<select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.archives.MaterielPageListVO" parameterType="map">
+		SELECT
+			t_materiel.id,
+			t_materiel.`status`,
+			t_materiel.materiel_no AS materielNo,
+			t_materiel.materiel_name AS materielName,
+			t_materiel.materiel_level AS materielLevel,
+			t_materiel.product_class_no AS productClassNo,
+			t_materiel.product_class_name AS productClassName,
+			t_materiel.sku_no AS skuNo,
+			t_materiel.sku_name AS skuName,
+			t_materiel.unit,
+			t_materiel.manufacturer_code AS manufacturerCode,
+			t_materiel.manufacturer_name AS manufacturerName,
+			t_materiel.executive_standard AS executiveStandard,
+			t_materiel.standard_number AS standardNumber,
+			t_materiel.erp_materiel_no AS erpMaterielNo,
+			t_materiel.erp_materiel_name AS erpMaterielName,
+			t_materiel.erp_materiel_showdesc AS erpMaterielShowdesc,
+			t_materiel.tax,
+			t_materiel.receipt_name AS receiptName,
+			t_materiel.receipt_matriel_type AS receiptMatrielType,
+			t_materiel.org_no AS orgNo,
+			t_materiel.org_name AS orgName,
+			t_materiel.dept_no AS deptNo,
+			t_materiel.dept_name AS deptName
+		FROM
+			t_materiel
+		WHERE
+			t_materiel.is_deleted = #{param.deleted}
+		<if test="param.status != null and param.status != ''">
+			AND t_materiel.`status` LIKE CONCAT('%', #{param.status}, '%')
+		</if>
+		<if test="param.materielNo != null and param.materielNo != ''">
+			AND t_materiel.materiel_no LIKE CONCAT('%', #{param.materielNo}, '%')
+		</if>
+		<if test="param.materielName != null and param.materielName != ''">
+			AND t_materiel.materiel_name LIKE CONCAT('%', #{param.materielName}, '%')
+		</if>
+		<if test="param.materielLevel != null and param.materielLevel != ''">
+			AND t_materiel.materiel_level LIKE CONCAT('%', #{param.materielLevel}, '%')
+		</if>
+		<if test="param.productClassNo != null and param.productClassNo != ''">
+			AND t_materiel.product_class_no LIKE CONCAT('%', #{param.productClassNo}, '%')
+		</if>
+		<if test="param.productClassName != null and param.productClassName != ''">
+			AND t_materiel.product_class_name LIKE CONCAT('%', #{param.productClassName}, '%')
+		</if>
+		<if test="param.skuNo != null and param.skuNo != ''">
+			AND t_materiel.sku_no LIKE CONCAT('%', #{param.skuNo}, '%')
+		</if>
+		<if test="param.skuName != null and param.skuName != ''">
+			AND t_materiel.sku_name LIKE CONCAT('%', #{param.skuName}, '%')
+		</if>
+		<if test="param.unit != null and param.unit != ''">
+			AND t_materiel.unit LIKE CONCAT('%', #{param.unit}, '%')
+		</if>
+		<if test="param.manufacturerCode != null and param.manufacturerCode != ''">
+			AND t_materiel.manufacturer_code LIKE CONCAT('%', #{param.manufacturerCode}, '%')
+		</if>
+		<if test="param.manufacturerName != null and param.manufacturerName != ''">
+			AND t_materiel.manufacturer_name LIKE CONCAT('%', #{param.manufacturerName}, '%')
+		</if>
+		<if test="param.executiveStandard != null and param.executiveStandard != ''">
+			AND t_materiel.executive_standard LIKE CONCAT('%', #{param.executiveStandard}, '%')
+		</if>
+		<if test="param.erpMaterielNo != null and param.erpMaterielNo != ''">
+			AND t_materiel.erp_materiel_no LIKE CONCAT('%', #{param.erpMaterielNo}, '%')
+		</if>
+		<if test="param.erpMaterielName != null and param.erpMaterielName != ''">
+			AND t_materiel.erp_materiel_name LIKE CONCAT('%', #{param.erpMaterielName}, '%')
+		</if>
+		<if test="param.erpMaterielShowdesc != null and param.erpMaterielShowdesc != ''">
+			AND t_materiel.erp_materiel_showdesc LIKE CONCAT('%', #{param.erpMaterielShowdesc}, '%')
+		</if>
+		<if test="param.tax != null and param.tax != ''">
+			AND t_materiel.tax LIKE CONCAT('%', #{param.tax}, '%')
+		</if>
+		<if test="param.receiptName != null and param.receiptName != ''">
+			AND t_materiel.receipt_name LIKE CONCAT('%', #{param.receiptName}, '%')
+		</if>
+		<if test="param.receiptMatrielType != null and param.receiptMatrielType != ''">
+			AND t_materiel.receipt_matriel_type LIKE CONCAT('%', #{param.receiptMatrielType}, '%')
+		</if>
+		<if test="param.orgNo != null and param.orgNo != ''">
+			AND t_materiel.org_no LIKE CONCAT('%', #{param.orgNo}, '%')
+		</if>
+		<if test="param.orgName != null and param.orgName != ''">
+			AND t_materiel.org_name LIKE CONCAT('%', #{param.orgName}, '%')
+		</if>
+		<if test="param.deptNo != null and param.deptNo != ''">
+			AND t_materiel.dept_no LIKE CONCAT('%', #{param.deptNo}, '%')
+		</if>
+		<if test="param.deptName != null and param.deptName != ''">
+			AND t_materiel.dept_name LIKE CONCAT('%', #{param.deptName}, '%')
+		</if>
+		ORDER BY
+			t_materiel.gmt_modified DESC
+	</select>
+
+	<select id="materielNoCount" resultType="java.lang.Long">
+		SELECT
+		    COUNT(t_materiel.materiel_no)
+		FROM
+		t_materiel
+	</select>
+</mapper>

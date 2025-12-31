@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="skuFileForm" version="1.0">
+	<window id="skuFileFormWin" title="产品档案" layout="vbox" autoScroll="true">
+		<formpanel id="skuFileForm" columns="1" height="320" method="/webapi/archives/skuFile/get?id=#{id}">
+			<formwidget xtype="filesetBegin" title="基本信息" columns="4"/>
+			<formwidget fieldLabel="主键ID" fieldProp="id" xtype="textfield" hidden="true" allowBlank="true" />
+			<formwidget fieldLabel="牌号编码" fieldProp="skuNo" xtype="textfield" />
+			<formwidget fieldLabel="牌号名称" fieldProp="skuName" xtype="textfield" />
+			<formwidget fieldLabel="产品分类编码" fieldProp="productClassNo" xtype="textfield" hidden="true" allowBlank="true" />
+			<formwidget fieldLabel="产品分类名称" fieldProp="productClassName" xtype="treecombo" url="/webapi/archives/productClass/tree/list"
+				text="productClassName" callback="setProductClass" expands="getProductClass" />
+			<formwidget fieldLabel="主副产品" fieldProp="mainOrByproduct" xtype="combo" key="zfproduct" />
+			<formwidget fieldLabel="状态" fieldProp="status" xtype="combo" key="status" value="SY" />
+			<formwidget fieldLabel="执行标准" fieldProp="executiveStandard" xtype="combo" key="zxbz" />
+			<formwidget fieldLabel="标准号" fieldProp="standardNumber" xtype="textfield" />
+			<formwidget xtype="filesetEnd" />
+			<formwidget xtype="filesetBegin" title="制单用户信息" columns="4"/>
+			<formwidget fieldLabel="制单人" fieldProp="createByName" xtype="displayfield" />
+			<formwidget fieldLabel="制单时间" fieldProp="gmtCreate" xtype="displayfield" />
+			<formwidget fieldLabel="单位名称" fieldProp="orgName" xtype="displayfield" />
+			<formwidget fieldLabel="部门名称" fieldProp="deptName" xtype="displayfield" />
+			<formwidget fieldLabel="最后修改人" fieldProp="updateByName" xtype="displayfield" />
+			<formwidget fieldLabel="最后修改时间" fieldProp="gmtModified" xtype="displayfield" />
+			<formwidget xtype="filesetEnd" />
+		</formpanel>
+		<gridpanel id="zxbzFileList" title="执行标准文件列表" url="/webapi/system/user/page/list" 
+				flex="1" style="margin: 0px 15px 15px 15px;">
+			<column label="文件名" prop="name" xtype="textfield" />
+			<column label="文件类型" prop="type" xtype="textfield"/>
+			<column label="制单时间" prop="gmtCreate" xtype="datetimefield" format="Y-m-d H:i:s" />
+			<column label="最后修改时间" prop="gmtModified" xtype="datetimefield" format="Y-m-d H:i:s" />
+			<toolbar id="zxbzFileListTb">
+				<button id="fileNew" text="新增" iconCls="addButton" handler="CrrHandler" />
+				<button id="fileDelete" text="删除" iconCls="deleteButton" handler="CrrHandler" />
+			</toolbar>
+		</gridpanel>
+		<button id="save" text="保存" iconCls="saveButton" handler="CrrHandler" />
+	</window>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 保存&更新事件
+			if (t.id == "save") {
+				if (Ext.getCmp('skuFileForm').getForm().isValidCux()) {
+					var data = Ext.getCmp("skuFileForm").getForm().getValues();
+					var url = "/webapi/archives/skuFile/add";
+					if (data.id != null && data.id != "") {
+						url = "/webapi/archives/skuFile/edit";
+					}
+					post(url, data, function(res) {
+						Ext.MessageBox.alert("提示", res.msg);
+						Ext.getCmp('skuFileList').getStore().load();
+						Ext.getCmp('skuFileFormWin').close();
+					});
+				}
+			}
+			// 新增事件
+			if (t.id == "fileNew") {
+			}
+			// 删除事件
+			if (t.id == "fileDelete") {
+			}
+		}
+		// 产品分类赋值
+		function setProductClass(data) {
+			Ext.getCmp("skuFileForm").getForm().findField("productClassNo").setValue(data.productClassNo);
+		}
+		// 获取产品分类值
+		function getProductClass() {
+			var form = Ext.getCmp("skuFileForm").getForm();
+			var data = {
+				productClassNo: form.findField("productClassNo").getValue()
+			}
+			return data;
+		}
+	]]></script>
+</page>

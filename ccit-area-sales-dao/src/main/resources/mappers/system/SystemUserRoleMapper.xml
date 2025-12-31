@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.system.SystemUserRoleMapper">
+
+	<!-- 获取用户菜单数组ID -->
+	<select id="getUserMenuIds" resultType="java.lang.Long" parameterType="java.lang.String">
+		SELECT DISTINCT
+			t_system_role_menu.menu_id
+		FROM
+			t_system_user_role
+		LEFT JOIN t_system_role_menu ON t_system_user_role.role_id = t_system_role_menu.role_id
+		WHERE
+			t_system_user_role.user_id = (
+				SELECT
+					t_system_user.id
+				FROM
+					t_system_user
+				WHERE
+					t_system_user.is_deleted = 0
+				AND t_system_user.user_name = #{userName}
+			)
+	</select>
+	
+	<!-- 获取用户菜单权限数组 -->
+	<select id="getUserMenuPurview" resultType="java.lang.String" parameterType="java.lang.String">
+		SELECT DISTINCT
+			t_system_menu.menu_purview
+		FROM
+			t_system_user
+		LEFT JOIN t_system_user_role ON t_system_user.id = t_system_user_role.user_id
+		LEFT JOIN t_system_role_menu ON t_system_user_role.role_id = t_system_role_menu.role_id
+		LEFT JOIN t_system_menu ON t_system_role_menu.menu_id = t_system_menu.id
+		WHERE
+			t_system_menu.is_deleted = 0
+		AND t_system_menu.menu_type IN (2, 3)
+		AND t_system_user.user_name = #{userName}
+	</select>
+
+</mapper>

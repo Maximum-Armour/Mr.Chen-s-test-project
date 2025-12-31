@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.archives.DeliveryPlaceDepotMapper">
+
+	<!-- 分页列表，支持分页查询和高级查询 -->
+	<select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.archives.DeliveryPlaceDepotPageListVO" parameterType="map">
+		SELECT
+			t_delivery_place_depot.id,
+			t_depot.id AS depotId,
+			t_depot.`status`,
+			t_depot.depot_no AS depotNo,
+			t_depot.depot_name AS depotName,
+			t_depot.is_port AS isPort,
+			t_depot.is_transit AS isTransit,
+			t_depot.depot_address AS depotAddress,
+			t_depot.manager,
+			t_depot.manager_telephone AS managerTelephone
+		FROM
+			t_delivery_place_depot
+		LEFT JOIN t_depot ON t_delivery_place_depot.depot_no = t_depot.depot_no
+		WHERE
+			t_delivery_place_depot.is_deleted = #{param.deleted}
+		AND
+			t_delivery_place_depot.delivery_place_no = (
+				SELECT
+					t_delivery_place.delivery_place_no
+				FROM
+					t_delivery_place
+				WHERE
+					t_delivery_place.id = #{param.id}
+			)
+		<if test="param.depotNo != null and param.depotNo != ''">
+			AND t_depot.depot_no LIKE CONCAT('%', #{param.depotNo}, '%')
+		</if>
+		<if test="param.depotName != null and param.depotName != ''">
+			AND t_depot.depot_name LIKE CONCAT('%', #{param.depotName}, '%')
+		</if>
+		<if test="param.isPort != null and param.isPort != ''">
+			AND t_depot.is_port LIKE CONCAT('%', #{param.isPort}, '%')
+		</if>
+		<if test="param.isTransit != null and param.isTransit != ''">
+			AND t_depot.is_transit LIKE CONCAT('%', #{param.isTransit}, '%')
+		</if>
+		<if test="param.depotAddress != null and param.depotAddress != ''">
+			AND t_depot.depot_address LIKE CONCAT('%', #{param.depotAddress}, '%')
+		</if>
+		<if test="param.manager != null and param.manager != ''">
+			AND t_depot.manager LIKE CONCAT('%', #{param.manager}, '%')
+		</if>
+		<if test="param.managerTelephone != null and param.managerTelephone != ''">
+			AND t_depot.manager_telephone LIKE CONCAT('%', #{param.managerTelephone}, '%')
+		</if>
+		ORDER BY
+			t_delivery_place_depot.gmt_modified DESC
+	</select>
+
+
+
+	<select id="selectdepotNo" resultType="string" parameterType="com.ccit.area.sales.dao.dto.archives.DeliveryPlaceDepotAddDTO">
+
+		SELECT
+
+			t_delivery_place_depot.depot_no as depotNo
+		FROM
+			t_delivery_place_depot
+		where
+			t_delivery_place_depot.is_deleted = #{entity.deleted}
+			and
+			t_delivery_place_depot.delivery_place_no =#{entity.deliveryPlaceNo}
+
+
+
+	</select>
+
+
+
+	<update id="updatedeliveryPlaceNo" parameterType="map">
+		UPDATE t_delivery_place_depot
+		SET
+			depot_no = #{depotNo}
+		WHERE
+			delivery_place_no = #{deliveryPlaceNo}
+	</update>
+
+</mapper>

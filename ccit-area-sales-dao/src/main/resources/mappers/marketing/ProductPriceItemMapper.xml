@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.marketing.ProductPriceItemMapper">
+
+    <!-- 分页列表，支持分页查询和高级查询 -->
+    <select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.marketing.ProductPriceItemPageListVO">
+        SELECT
+        t_product_price_item.id,
+        t_product_price_item.product_price_no AS productPriceNo,
+        t_product_price_item.product_price_item_no AS productPriceItemNo,
+        t_product_price_item.scheme_item_no AS schemeItemNo,
+        t_price_scheme_item.area_no AS areaNo,
+        t_price_scheme_item.area_name AS areaName,
+        t_price_scheme_item.delivery_place_no AS deliveryPlaceNo,
+        t_price_scheme_item.delivery_place_name AS deliveryPlaceName,
+        t_price_scheme_item.delivery_place_class_no AS deliveryPlaceClassNo,
+        t_price_scheme_item.delivery_place_class_name AS deliveryPlaceClassName,
+        t_price_scheme_item.distribution_way AS distributionWay,
+        t_price_scheme_item.transport_way AS transportWay,
+        t_price_scheme_item.pay_way AS payWay,
+        t_product_price_item.price,
+        t_product_price_item.tax_price AS taxPrice,
+        t_product_price_item.depot_no AS depotNo,
+        t_product_price_item.depot_name AS depotName,
+        t_product_price_item.currency_unit AS currencyUnit,
+        t_product_price_item.benchmark_price AS benchmarkPrice,
+        t_product_price_item.remark,
+        t_product_price_item.org_no AS orgNo,
+        t_product_price_item.org_name AS orgName,
+        t_product_price.product_class_no AS productClassNo,
+        t_product_price.product_class_name AS productClassName,
+        t_product_price.sku_no AS skuNo,
+        t_product_price.sku_name AS skuName,
+        t_product_price.materiel_no AS materielNo,
+        t_product_price.materiel_name AS materielName,
+        t_product_price.currency,
+        t_product_price.trade_type AS tradeType,
+        t_product_price.effective_start_time AS effectiveStartTime,
+        t_product_price.effective_end_time AS effectiveEndTime,
+        t_price_scheme_item.pay_way AS payWay
+        FROM
+        t_product_price_item
+        LEFT JOIN t_product_price ON t_product_price_item.product_price_no = t_product_price.product_price_no
+        LEFT JOIN t_price_scheme_item ON t_product_price_item.scheme_item_no = t_price_scheme_item.scheme_item_no
+        WHERE
+        t_product_price_item.is_deleted = 0
+        <if test="id != null">
+            AND t_product_price.id = #{id}
+        </if>
+        <if test="productPriceNo != null and productPriceNo != ''">
+            AND t_product_price_item.product_price_no LIKE CONCAT('%', #{productPriceNo}, '%')
+        </if>
+        <if test="productPriceItemNo != null and productPriceItemNo != ''">
+            AND t_product_price_item.product_price_item_no LIKE CONCAT('%', #{productPriceItemNo}, '%')
+        </if>
+        <if test="schemeItemNo != null and schemeItemNo != ''">
+            AND t_product_price_item.scheme_item_no LIKE CONCAT('%', #{schemeItemNo}, '%')
+        </if>
+        <if test="areaNo != null and areaNo != ''">
+            AND t_price_scheme_item.area_no LIKE CONCAT('%', #{areaNo}, '%')
+        </if>
+        <if test="areaName != null and areaName != ''">
+            AND t_price_scheme_item.area_name LIKE CONCAT('%', #{areaName}, '%')
+        </if>
+        <if test="deliveryPlaceNo != null and deliveryPlaceNo != ''">
+            AND t_price_scheme_item.delivery_place_no LIKE CONCAT('%', #{deliveryPlaceNo}, '%')
+        </if>
+        <if test="deliveryPlaceName != null and deliveryPlaceName != ''">
+            AND t_price_scheme_item.delivery_place_name LIKE CONCAT('%', #{deliveryPlaceName}, '%')
+        </if>
+        <if test="deliveryPlaceClassNo != null and deliveryPlaceClassNo != ''">
+            AND t_price_scheme_item.delivery_place_class_no LIKE CONCAT('%', #{deliveryPlaceClassNo}, '%')
+        </if>
+        <if test="deliveryPlaceClassName != null and deliveryPlaceClassName != ''">
+            AND t_price_scheme_item.delivery_place_class_name LIKE CONCAT('%', #{deliveryPlaceClassName}, '%')
+        </if>
+        <if test="distributionWay != null and distributionWay != ''">
+            AND t_price_scheme_item.distribution_way LIKE CONCAT('%', #{distributionWay}, '%')
+        </if>
+        <if test="transportWay != null and transportWay != ''">
+            AND t_price_scheme_item.transport_way LIKE CONCAT('%', #{transportWay}, '%')
+        </if>
+        <if test="price != null and schemeItemNo != ''">
+            AND t_product_price_item.price LIKE CONCAT('%', #{price}, '%')
+        </if>
+        <if test="taxPrice != null and taxPrice != ''">
+            AND t_product_price_item.tax_price LIKE CONCAT('%', #{taxPrice}, '%')
+        </if>
+        <if test="depotNo != null and depotNo != ''">
+            AND t_product_price_item.depot_no LIKE CONCAT('%', #{depotNo}, '%')
+        </if>
+        <if test="depotName != null and depotName != ''">
+            AND t_product_price_item.depot_name LIKE CONCAT('%', #{depotName}, '%')
+        </if>
+        <if test="currencyUnit != null and currencyUnit != ''">
+            AND t_product_price_item.currency_unit LIKE CONCAT('%', #{currencyUnit}, '%')
+        </if>
+        <if test="benchmarkPrice != null and benchmarkPrice != ''">
+            AND t_product_price_item.benchmark_price LIKE CONCAT('%', #{benchmarkPrice}, '%')
+        </if>
+        <if test="remark != null and remark != ''">
+            AND t_product_price_item.remark LIKE CONCAT('%', #{remark}, '%')
+        </if>
+        <if test="productClassNo != null and productClassNo != ''">
+            AND t_product_price.product_class_no LIKE CONCAT('%', #{productClassNo}, '%')
+        </if>
+        <if test="productClassName != null and productClassName != ''">
+            AND t_product_price.product_class_name LIKE CONCAT('%', #{productClassName}, '%')
+        </if>
+        <if test="skuNo != null and skuNo != ''">
+            AND t_product_price.sku_no LIKE CONCAT('%', #{skuNo}, '%')
+        </if>
+        <if test="skuName != null and skuName != ''">
+            AND t_product_price.sku_name LIKE CONCAT('%', #{skuName}, '%')
+        </if>
+        <if test="materielNo != null and materielNo != ''">
+            AND t_product_price.materiel_no LIKE CONCAT('%', #{materielNo}, '%')
+        </if>
+        <if test="materielName != null and materielName != ''">
+            AND t_product_price.materiel_name LIKE CONCAT('%', #{materielName}, '%')
+        </if>
+        <if test="currency != null and currency != ''">
+            AND t_product_price.currency LIKE CONCAT('%', #{currency}, '%')
+        </if>
+        <if test="tradeType != null and tradeType != ''">
+            AND t_product_price.trade_type LIKE CONCAT('%', #{tradeType}, '%')
+        </if>
+        <if test="effectiveStartTime != null">
+            AND t_product_price.effective_start_time LIKE CONCAT('%', #{effectiveStartTime}, '%')
+        </if>
+        <if test="effectiveEndTime != null">
+            AND t_product_price.effective_end_time LIKE CONCAT('%', #{effectiveEndTime}, '%')
+        </if>
+        <if test="gtToday != null and true == gtToday">
+            AND t_product_price.effective_end_time <![CDATA[ >= ]]> NOW()
+        </if>
+        <if test="status != null and status != ''">
+            AND t_product_price.status = #{status}
+        </if>
+        ORDER BY
+        t_product_price_item.gmt_modified DESC
+    </select>
+
+    <select id="selectList" resultType="com.ccit.area.sales.dao.vo.marketing.ProductPriceItemPageListVO"
+            parameterType="map">
+        SELECT
+        t_product_price_item.id,
+        t_product_price_item.product_price_no AS productPriceNo,
+        t_product_price_item.product_price_item_no AS productPriceItemNo,
+        t_product_price_item.scheme_item_no AS schemeItemNo,
+        t_price_scheme_item.area_no AS areaNo,
+        t_price_scheme_item.area_name AS areaName,
+        t_price_scheme_item.delivery_place_no AS deliveryPlaceNo,
+        t_price_scheme_item.delivery_place_name AS deliveryPlaceName,
+        t_price_scheme_item.delivery_place_class_no AS deliveryPlaceClassNo,
+        t_price_scheme_item.delivery_place_class_name AS deliveryPlaceClassName,
+        t_price_scheme_item.distribution_way AS distributionWay,
+        t_price_scheme_item.transport_way AS transportWay,
+        t_price_scheme_item.pay_way AS payWay,
+        t_product_price_item.price,
+        t_product_price_item.tax_price AS taxPrice,
+        t_product_price_item.depot_no AS depotNo,
+        t_product_price_item.depot_name AS depotName,
+        t_product_price_item.currency_unit AS currencyUnit,
+        t_product_price_item.benchmark_price AS benchmarkPrice,
+        t_product_price_item.remark,
+        t_product_price_item.org_no AS orgNo,
+        t_product_price_item.org_name AS orgName,
+        t_product_price.product_class_no AS productClassNo,
+        t_product_price.product_class_name AS productClassName,
+        t_product_price.sku_no AS skuNo,
+        t_product_price.sku_name AS skuName,
+        t_product_price.materiel_no AS materielNo,
+        t_product_price.materiel_name AS materielName,
+        t_product_price.currency,
+        t_product_price.trade_type AS tradeType,
+        t_product_price.effective_start_time AS effectiveStartTime,
+        t_product_price.effective_end_time AS effectiveEndTime,
+        t_product_price.univalence_model AS univalenceModel,
+        t_product_price.business_type AS businessType,
+        t_price_scheme_item.pay_way AS payWay
+        FROM
+        t_product_price_item
+        LEFT JOIN t_product_price ON t_product_price_item.product_price_no = t_product_price.product_price_no
+        LEFT JOIN t_price_scheme_item ON t_product_price_item.scheme_item_no = t_price_scheme_item.scheme_item_no
+        LEFT JOIN t_system_user
+        ON t_product_price_item.create_by = t_system_user.id
+        WHERE
+        t_product_price_item.is_deleted = #{param.deleted}
+        AND t_product_price_item.org_no IN
+        <foreach item="item" index="index" collection="param.orgNoList"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND t_product_price.status = '审核完成'
+        AND t_product_price.effective_start_time <![CDATA[<=CURRENT_TIMESTAMP]]>
+        AND t_product_price.effective_end_time <![CDATA[>=CURRENT_TIMESTAMP]]>
+        <if test="param.id != null">
+            AND t_product_price.id = #{param.id}
+        </if>
+        <if test="param.userName != null and param.userName != ''">
+            AND t_system_user.user_name LIKE CONCAT('%', #{param.userName}, '%')
+        </if>
+        <if test="param.orgNo != null and param.orgNo != ''">
+            AND t_product_price_item.org_no LIKE CONCAT('%', #{param.orgNo}, '%')
+        </if>
+        <if test="param.productPriceNo != null and param.productPriceNo != ''">
+            AND t_product_price_item.product_price_no LIKE CONCAT('%', #{param.productPriceNo}, '%')
+        </if>
+        <if test="param.productPriceItemNo != null and param.productPriceItemNo != ''">
+            AND t_product_price_item.product_price_item_no LIKE CONCAT('%', #{param.productPriceItemNo}, '%')
+        </if>
+        <if test="param.schemeItemNo != null and param.schemeItemNo != ''">
+            AND t_product_price_item.scheme_item_no LIKE CONCAT('%', #{param.schemeItemNo}, '%')
+        </if>
+        <if test="param.areaNo != null and param.areaNo != ''">
+            AND t_price_scheme_item.area_no LIKE CONCAT('%', #{param.areaNo}, '%')
+        </if>
+        <if test="param.areaName != null and param.areaName != ''">
+            AND t_price_scheme_item.area_name LIKE CONCAT('%', #{param.areaName}, '%')
+        </if>
+        <if test="param.deliveryPlaceNo != null and param.deliveryPlaceNo != ''">
+            AND t_price_scheme_item.delivery_place_no LIKE CONCAT('%', #{param.deliveryPlaceNo}, '%')
+        </if>
+        <if test="param.deliveryPlaceName != null and param.deliveryPlaceName != ''">
+            AND t_price_scheme_item.delivery_place_name LIKE CONCAT('%', #{param.deliveryPlaceName}, '%')
+        </if>
+        <if test="param.deliveryPlaceClassNo != null and param.deliveryPlaceClassNo != ''">
+            AND t_price_scheme_item.delivery_place_class_no LIKE CONCAT('%', #{param.deliveryPlaceClassNo}, '%')
+        </if>
+        <if test="param.deliveryPlaceClassName != null and param.deliveryPlaceClassName != ''">
+            AND t_price_scheme_item.delivery_place_class_name LIKE CONCAT('%', #{param.deliveryPlaceClassName}, '%')
+        </if>
+        <if test="param.distributionWay != null and param.distributionWay != ''">
+            AND t_price_scheme_item.distribution_way LIKE CONCAT('%', #{param.distributionWay}, '%')
+        </if>
+        <if test="param.transportWay != null and param.transportWay != ''">
+            AND t_price_scheme_item.transport_way LIKE CONCAT('%', #{param.transportWay}, '%')
+        </if>
+        <if test="param.price != null and param.schemeItemNo != ''">
+            AND t_product_price_item.price LIKE CONCAT('%', #{param.price}, '%')
+        </if>
+        <if test="param.taxPrice != null and param.taxPrice != ''">
+            AND t_product_price_item.tax_price LIKE CONCAT('%', #{param.taxPrice}, '%')
+        </if>
+        <if test="param.depotNo != null and param.depotNo != ''">
+            AND t_product_price_item.depot_no LIKE CONCAT('%', #{param.depotNo}, '%')
+        </if>
+        <if test="param.depotName != null and param.depotName != ''">
+            AND t_product_price_item.depot_name LIKE CONCAT('%', #{param.depotName}, '%')
+        </if>
+        <if test="param.currencyUnit != null and param.currencyUnit != ''">
+            AND t_product_price_item.currency_unit LIKE CONCAT('%', #{param.currencyUnit}, '%')
+        </if>
+        <if test="param.benchmarkPrice != null and param.benchmarkPrice != ''">
+            AND t_product_price_item.benchmark_price LIKE CONCAT('%', #{param.benchmarkPrice}, '%')
+        </if>
+        <if test="param.remark != null and param.remark != ''">
+            AND t_product_price_item.remark LIKE CONCAT('%', #{param.remark}, '%')
+        </if>
+        <if test="param.orgName != null and param.orgName != ''">
+            AND t_product_price_item.org_name LIKE CONCAT('%', #{param.orgName}, '%')
+        </if>
+        <if test="param.productClassNo != null and param.productClassNo != ''">
+            AND t_product_price.product_class_no LIKE CONCAT('%', #{param.productClassNo}, '%')
+        </if>
+        <if test="param.productClassName != null and param.productClassName != ''">
+            AND t_product_price.product_class_name LIKE CONCAT('%', #{param.productClassName}, '%')
+        </if>
+        <if test="param.skuNo != null and param.skuNo != ''">
+            AND t_product_price.sku_no LIKE CONCAT('%', #{param.skuNo}, '%')
+        </if>
+        <if test="param.skuName != null and param.skuName != ''">
+            AND t_product_price.sku_name LIKE CONCAT('%', #{param.skuName}, '%')
+        </if>
+        <if test="param.materielNo != null and param.materielNo != ''">
+            AND t_product_price.materiel_no LIKE CONCAT('%', #{param.materielNo}, '%')
+        </if>
+        <if test="param.materielName != null and param.materielName != ''">
+            AND t_product_price.materiel_name LIKE CONCAT('%', #{param.materielName}, '%')
+        </if>
+        <if test="param.currency != null and param.currency != ''">
+            AND t_product_price.currency LIKE CONCAT('%', #{param.currency}, '%')
+        </if>
+        <if test="param.tradeType != null and param.tradeType != ''">
+            AND t_product_price.trade_type LIKE CONCAT('%', #{param.tradeType}, '%')
+        </if>
+        <if test="param.gtToday != null and true == param.gtToday">
+            AND t_product_price.effective_end_time <![CDATA[ >= ]]> NOW()
+        </if>
+        <if test="param.status != null and param.status != ''">
+            AND t_product_price.status = #{param.status}
+        </if>
+        ORDER BY
+        t_product_price_item.gmt_modified DESC
+    </select>
+</mapper>

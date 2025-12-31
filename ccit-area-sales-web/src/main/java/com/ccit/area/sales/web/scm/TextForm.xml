@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="TextForm" version="1.0">
+	<window id="TextFormWin" title="用户新增" layout="vbox" autoScroll="true">
+		<formpanel id="ServerForm" method="initForm" columns="4" height="170">
+			<formwidget xtype="filesetBegin" title="基本信息" columns="4"/>
+			<formwidget fieldLabel="用户名" fieldProp="userName" xtype="textfield" readOnly="true" />
+			<formwidget fieldLabel="用户名" fieldProp="userName" xtype="textfield" allowBlank="false" />
+			<formwidget fieldLabel="用户名" fieldProp="userName" xtype="textfield" />
+			<formwidget fieldLabel="用户名" fieldProp="userName" xtype="textfield" />
+			<formwidget fieldLabel="用户名" fieldProp="userName" xtype="textfield" />
+			<formwidget fieldLabel="生效时间" fieldProp="startTime" xtype="datetimefield" />
+			<formwidget fieldLabel="生效时间" fieldProp="startTime" xtype="datefield" />
+			<formwidget xtype="filesetEnd" />
+		</formpanel>
+		<gridpanel id="userNotSubmitPanel313131" title="用户列表&lt;待提交&gt;" url="/webapi/system/user/page/list" 
+				flex="1" style="margin: 0px 15px 15px 15px;">
+			<column label="主键ID" prop="sysid" xtype="numberfield" hidden="true" />
+			<column label="名称" prop="name" xtype="textfield" />
+			<column label="时间" prop="date" xtype="datefield" format="Y-m-d" />
+			<column label="类型" prop="type" xtype="combobox" dictKey="DJLX" />
+		</gridpanel>
+		<button id="bsave" text="保 存" iconCls="newButton" handler="CrrHandler" />
+	</window>
+	<script id="script"><![CDATA[
+		function CrrHandler(t) {
+			if (t.id == "bsave") {
+				if (Ext.getCmp('ServerForm').getForm().isValidCux()) {
+				}
+			}
+		}
+	]]></script>
+</page>

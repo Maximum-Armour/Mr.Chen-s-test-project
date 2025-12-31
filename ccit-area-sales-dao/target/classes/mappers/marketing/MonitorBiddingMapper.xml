@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.marketing.MonitorBiddingMapper">
+
+    <!-- 根据id查询数据 -->
+    <select id="bidList" resultType="com.ccit.area.sales.dao.vo.marketing.MonitorBiddingPageListVO">
+        SELECT t_price_bidding.tender_number           AS tenderNumber,
+               t_price_bidding.customer                AS customer,
+               t_price_bidding.latest_quotation        AS latestQuotation,
+               t_price_bidding.quantity                AS quantity,
+               t_price_bidding.quotation_time          AS quotationTime,
+               COUNT(t_price_bidding.latest_quotation) AS biddingFrequency,
+               t_sales_bidding.low_price               AS initialQuotation
+        FROM t_price_bidding
+                 LEFT JOIN
+             t_sales_bidding
+             ON
+                 t_price_bidding.tender_number = t_sales_bidding.tender_number
+        WHERE t_price_bidding.is_deleted = '0'
+          AND t_price_bidding.tender_number = #{tenderNumber}
+        GROUP BY
+            t_price_bidding.tender_number,
+            t_price_bidding.customer,
+            t_price_bidding.latest_quotation,
+            t_price_bidding.quantity,
+            t_price_bidding.quotation_time,
+            t_sales_bidding.low_price
+        ORDER BY t_price_bidding.quotation_time DESC
+    </select>
+
+    <!-- 根据id查询数据 -->
+    <select id="metaCreate" resultType="com.ccit.area.sales.dao.vo.marketing.MonitorBiddingPageListVO"
+    >
+        SELECT
+        t_price_bidding.tender_number AS tenderNumber,
+        t_price_bidding.customer AS customer,
+        t_price_bidding.latest_quotation AS latestQuotation,
+        t_price_bidding.quantity AS quantity,
+        t_price_bidding.quotation_time AS quotationTime,
+        COUNT(t_price_bidding.latest_quotation) AS biddingFrequency,
+        t_sales_bidding.low_price               AS initialQuotation
+        FROM
+        t_price_bidding
+        LEFT JOIN
+        t_sales_bidding
+        ON
+        t_price_bidding.tender_number = t_sales_bidding.tender_number
+        WHERE
+        t_price_bidding.is_deleted = '0'
+        AND t_price_bidding.tender_number =#{tenderNumber}
+        <if test="customerId != null and customerId != ''">
+            AND t_price_bidding.customer_id LIKE CONCAT('%', #{customerId}, '%')
+        </if>
+        GROUP BY
+        t_price_bidding.tender_number,
+        t_price_bidding.customer,
+        t_price_bidding.latest_quotation,
+        t_price_bidding.quantity,
+        t_price_bidding.quotation_time,
+        t_sales_bidding.low_price
+        ORDER BY
+        t_price_bidding.quotation_time DESC
+    </select>
+
+    <!-- 根据id查询数据 -->
+    <select id="bidDetails" resultType="com.ccit.area.sales.dao.vo.marketing.OrderBiddingPageListVO"
+            parameterType="map">
+        SELECT t_price_bidding.customer         AS customer,
+               t_price_bidding.latest_quotation AS latestQuotation,
+               t_price_bidding.quotation_time   AS quotationTime
+        FROM t_price_bidding
+        WHERE t_price_bidding.is_deleted = '0'
+          AND t_price_bidding.tender_number = #{tenderNumber}
+        ORDER BY t_price_bidding.quotation_time ASC
+    </select>
+
+    <!-- 根据id查询数据 -->
+    <select id="bidDetailsJJ" resultType="com.ccit.area.sales.dao.vo.marketing.OrderBiddingPageListVO"
+            parameterType="map">
+        SELECT t_price_bidding.customer         AS customer,
+               t_price_bidding.latest_quotation AS latestQuotation,
+               t_price_bidding.quotation_time   AS quotationTime
+        FROM t_price_bidding
+        WHERE t_price_bidding.is_deleted = '0'
+          AND t_price_bidding.tender_number = #{tenderNumber}
+          AND t_price_bidding.customer_id = #{customerId}
+        ORDER BY t_price_bidding.quotation_time ASC
+    </select>
+
+    <select id="selAddressName" resultType="java.lang.String">
+        SELECT t_delivery_place.delivery_place_name AS deliveryPlaceName
+        FROM t_delivery_place
+        WHERE t_delivery_place.delivery_place_no = #{deliveryPlaceNo}
+    </select>
+
+    <select id="selDeliveryWarehouseName" resultType="java.lang.String">
+        SELECT t_depot.depot_name AS depotName
+        FROM t_depot
+        WHERE t_depot.depot_no = #{depotNo}
+    </select>
+    <select id="getCompaniesList" resultType="com.ccit.area.sales.dao.vo.marketing.CompaniesListVO">
+        select company_name
+        from t_price_bidding
+        where tender_number = #{tenderNumber}
+        group by company_name
+    </select>
+</mapper>

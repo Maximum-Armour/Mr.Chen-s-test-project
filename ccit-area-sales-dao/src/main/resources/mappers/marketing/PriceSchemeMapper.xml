@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.marketing.PriceSchemeMapper">
+
+	<!-- 分页列表，支持分页查询和高级查询 -->
+	<select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.marketing.PriceSchemePageListVO" parameterType="map">
+		SELECT
+			t_price_scheme.id,
+			t_price_scheme.`status`,
+			t_price_scheme.scheme_no AS schemeNo,
+			t_price_scheme.scheme_name AS schemeName,
+			t_price_scheme.product_class_no AS productClassNo,
+		    t_product_class.product_class_name AS productClassName,
+			t_price_scheme.trade_type AS tradeType,
+			t_price_scheme.org_no AS orgNo,
+			t_price_scheme.org_name AS orgName,
+		    t_price_scheme.workflowid AS workflowid,
+			t_price_scheme.company_no AS companyNo
+		FROM
+			t_price_scheme
+		LEFT JOIN t_product_class
+		ON t_price_scheme.product_class_no = t_product_class.product_class_no
+		LEFT JOIN t_system_user
+		ON t_price_scheme.create_by = t_system_user.id
+		WHERE
+			t_price_scheme.is_deleted = #{param.deleted}
+		  AND t_price_scheme.org_no IN
+		<foreach item="item" index="index" collection="param.orgNoList"
+				 open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		<if test="param.userName != null and param.userName != ''">
+			AND t_system_user.user_name LIKE CONCAT('%', #{param.userName}, '%')
+		</if>
+		<if test="param.status != null and param.status != ''">
+			AND t_price_scheme.`status` LIKE CONCAT('%', #{param.status}, '%')
+		</if>
+		<if test="param.schemeNo != null and param.schemeNo != ''">
+			AND t_price_scheme.scheme_no LIKE CONCAT('%', #{param.schemeNo}, '%')
+		</if>
+		<if test="param.schemeName != null and param.schemeName != ''">
+			AND t_price_scheme.scheme_name LIKE CONCAT('%', #{param.schemeName}, '%')
+		</if>
+		<if test="param.productClassNo != null and param.productClassNo != ''">
+			AND t_price_scheme.product_class_no LIKE CONCAT('%', #{param.productClassNo}, '%')
+		</if>
+		<if test="param.productClassName != null and param.productClassName != ''">
+			AND t_price_scheme.product_class_name LIKE CONCAT('%', #{param.productClassName}, '%')
+		</if>
+		<if test="param.tradeType != null and param.tradeType != ''">
+			AND t_price_scheme.trade_type LIKE CONCAT('%', #{param.tradeType}, '%')
+		</if>
+		<if test="param.orgNo != null and param.orgNo != ''">
+			AND t_price_scheme.org_no LIKE CONCAT('%', #{param.orgNo}, '%')
+		</if>
+		<if test="param.orgName != null and param.orgName != ''">
+			AND t_price_scheme.org_name LIKE CONCAT('%', #{param.orgName}, '%')
+		</if>
+		ORDER BY
+			t_price_scheme.gmt_modified DESC
+	</select>
+
+	<select id="selectItemCount" resultType="java.lang.Long">
+		SELECT
+			count(t_price_scheme_item.id)
+		FROM
+			t_price_scheme_item
+	</select>
+
+	<insert id="insertItem">
+		INSERT INTO t_price_scheme_item
+		    (scheme_no, scheme_item_no, area_name, delivery_place_name, delivery_place_class_name,
+		     distribution_way, transport_way, pay_way, currency, gmt_create, gmt_modified, unit)
+		VALUES
+			(#{schemeNo}, #{schemeItemNo}, #{areaName}, #{deliveryPlaceName}, #{deliveryPlaceClassName},
+			 #{distributionWay}, #{transportWay}, #{payWay}, #{currency},
+			 #{gmtCreate}, #{gmtModified}, #{unit})
+	</insert>
+
+	<update id="updateItem">
+		UPDATE t_price_scheme_item
+		SET
+			t_price_scheme_item.scheme_item_no = #{schemeItemNo},
+			t_price_scheme_item.area_name = #{areaName},
+			t_price_scheme_item.delivery_place_name = #{deliveryPlaceName},
+			t_price_scheme_item.delivery_place_class_name = #{deliveryPlaceClassName},
+			t_price_scheme_item.distribution_way = #{distributionWay},
+			t_price_scheme_item.transport_way = #{transportWay},
+			t_price_scheme_item.pay_way = #{payWay},
+			t_price_scheme_item.currency = #{currency},
+			t_price_scheme_item.unit = #{unit}
+		WHERE t_price_scheme_item.id = #{id}
+	</update>
+
+	<select id="selectSchemeNo" resultType="java.math.BigDecimal">
+		SELECT
+			t_system_sequence.value
+		FROM
+			t_system_sequence
+		WHERE t_system_sequence.code = #{code}
+	</select>
+
+	<select id="schemeItemNoCount" resultType="java.lang.Long">
+		SELECT
+			count(t_price_scheme_item.scheme_item_no)
+		FROM
+			t_price_scheme_item
+		WHERE t_price_scheme_item.scheme_no = #{schemeNo}
+	</select>
+
+	<update id="workflowid">
+		UPDATE t_price_scheme
+		SET t_price_scheme.workflowid = #{workflowid}
+	</update>
+
+	<update id="shbz">
+		UPDATE t_price_scheme
+		SET t_price_scheme.shbz = #{param.approvalStatus},
+			t_price_scheme.status = '审核完成'
+		WHERE t_price_scheme.id = #{param.id}
+	</update>
+
+	<select id="orgNoAbbreviation" resultType="java.lang.String">
+		select t_system_org.org_no_abbreviation
+		from t_system_org
+		where t_system_org.org_no = #{orgNo}
+	</select>
+
+	<select id="selectOrgNo" resultType="java.lang.String">
+		SELECT t_system_org.org_no
+		FROM t_system_org
+		WHERE t_system_org.id =
+			  (	SELECT
+					   t_system_org.parent_id
+				   FROM
+					   t_system_org
+				   WHERE
+					   t_system_org.org_no = #{orgNo})
+	</select>
+
+	<select id="selectOrgName" resultType="java.lang.String">
+		SELECT t_system_org.org_name
+		FROM t_system_org
+		WHERE t_system_org.org_no = #{orgNo}
+	</select>
+
+	<select id="selectItem" resultType="com.ccit.area.sales.dao.vo.marketing.PriceSchemeItemPageListVO">
+		SELECT
+		t_price_scheme_item.area_name AS areaName,
+		t_price_scheme_item.delivery_place_name AS deliveryPlaceName,
+		t_price_scheme_item.delivery_place_class_name AS deliveryPlaceClassName,
+		t_price_scheme_item.distribution_way AS distributionWay,
+		t_price_scheme_item.transport_way AS transportWay,
+		t_price_scheme_item.pay_way AS payWay,
+		t_price_scheme_item.currency,
+		t_price_scheme_item.unit
+		FROM
+		t_price_scheme_item
+		WHERE
+		t_price_scheme_item.is_deleted = 0
+		AND	t_price_scheme_item.scheme_no = #{schemeNo}
+	</select>
+</mapper>

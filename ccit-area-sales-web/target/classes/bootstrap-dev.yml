@@ -1,0 +1,23 @@
+spring:
+  cloud:
+    nacos:
+      username: ccit_pass
+      password: sd3kSVLkY5QU6uWv
+      discovery:
+        metadata:
+          management:
+            context-path: ${server.servlet.context-path}/actuator
+        server-addr: 172.16.192.4:8848
+        #nacos的命名空间ID，默认是public
+        namespace: 96b12fbc-7375-4ae3-8a65-62c69b8292bc
+        group: DEFAULT_GROUP
+      config:
+        server-addr: 172.16.192.4:8848
+        namespace: 96b12fbc-7375-4ae3-8a65-62c69b8292bc
+        group: DEFAULT_GROUP
+        file-extension: yml
+        #指定共享配置，且支持动态刷新
+        extension-configs:
+          - data-id: ccit-javatemplate-${spring.profiles.active}.yml
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true

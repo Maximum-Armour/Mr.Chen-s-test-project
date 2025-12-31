@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="productPriceList" version="1.0">
+	<tabpanel id="entrance">
+		<gridpanel id="productPriceListNew" title="产品定价&lt;新增&gt;" url="/webapi/marketing/productPrice/page/list" param="{shbz: '1'}">
+			<column label="主键ID" prop="id" xtype="numberfield" hidden="true" />
+			<column label="产品定价编码" prop="productPriceNo" xtype="textfield" renderer="linkurl" route="productPriceForm" />
+			<column label="产品分类编码" prop="productClassNo" xtype="textfield" hidden="true" />
+			<column label="产品分类名称" prop="productClassName" xtype="textfield" />
+			<column label="牌号编码" prop="skuNo" xtype="textfield" hidden="true" />
+			<column label="牌号名称" prop="skuName" xtype="textfield" />
+			<column label="产品编码" prop="materielNo" xtype="textfield" hidden="true" />
+			<column label="产品名称" prop="materielName" xtype="textfield" />
+			<column label="币种" prop="currency" xtype="combo" comboKey="currency" />
+			<column label="贸易类型" prop="tradeType" xtype="combo" comboKey="tradeType" />
+			<column label="单价模式" prop="univalenceModel" xtype="combo" comboKey="djms" />
+			<column label="业务类型" prop="businessType" xtype="combo" comboKey="businessType" />
+			<column label="状态" prop="status" xtype="textfield" />
+			<column label="有效开始时间" prop="effectiveStartTime" xtype="datetimefield" />
+			<column label="有效结束时间" prop="effectiveEndTime" xtype="datetimefield" />
+			<column label="组织编码" prop="orgNo" xtype="textfield" hidden="true" />
+			<column label="组织名称" prop="orgName" xtype="textfield" />
+			<column label="部门编码" prop="deptNo" xtype="textfield"  hidden="true" />
+			<column label="部门名称" prop="deptName" xtype="textfield" />
+			<toolbar id="productPriceListAddTb">
+				<button id="add" text="新增" iconCls="addButton" handler="CrrHandler" />
+				<button id="edit" text="修改" iconCls="editButton" handler="CrrHandler" />
+				<button id="delete" text="删除" iconCls="deleteButton" handler="CrrHandler" />
+				<button id="commit" text="提交" iconCls="commitButton" handler="CrrHandler" />
+			</toolbar>
+		</gridpanel>
+		<gridpanel id="productPriceListAudit" title="产品定价&lt;审核&gt;" url="/webapi/marketing/productPrice/page/list" param="{shbz: '2'}">
+			<column label="主键ID" prop="id" xtype="numberfield" hidden="true" />
+			<column label="产品定价编码" prop="productPriceNo" xtype="textfield" renderer="linkurl" route="productPriceForm" />
+			<column label="产品分类编码" prop="productClassNo" xtype="textfield" hidden="true" />
+			<column label="产品分类名称" prop="productClassName" xtype="textfield" />
+			<column label="牌号编码" prop="skuNo" xtype="textfield" hidden="true" />
+			<column label="牌号名称" prop="skuName" xtype="textfield" />
+			<column label="产品编码" prop="materielNo" xtype="textfield" hidden="true" />
+			<column label="产品名称" prop="materielName" xtype="textfield" />
+			<column label="币种" prop="currency" xtype="combo" comboKey="currency" />
+			<column label="贸易类型" prop="tradeType" xtype="combo" comboKey="tradeType" />
+			<column label="单价模式" prop="univalenceModel" xtype="combo" comboKey="djms" />
+			<column label="状态" prop="status" xtype="textfield" />
+			<column label="组织编码" prop="orgNo" xtype="textfield" hidden="true" />
+			<column label="组织名称" prop="orgName" xtype="textfield" />
+			<column label="部门编码" prop="deptNo" xtype="textfield"  hidden="true" />
+			<column label="部门名称" prop="deptName" xtype="textfield" />
+			<toolbar id="productPriceListAuditTb">
+				<button id="pass" text="审核通过" iconCls="passButton" handler="CrrHandler" />
+				<button id="refuse" text="审核拒绝" iconCls="refuseButton" handler="CrrHandler" />
+			</toolbar>
+		</gridpanel>
+		<gridpanel id="productPriceList" title="产品定价&lt;查询&gt;" url="/webapi/marketing/productPrice/page/list">
+			<column label="主键ID" prop="id" xtype="numberfield" hidden="true" />
+			<column label="产品定价编码" prop="productPriceNo" xtype="textfield" renderer="linkurl" route="productPriceForm" />
+			<column label="产品分类编码" prop="productClassNo" xtype="textfield" hidden="true" />
+			<column label="产品分类名称" prop="productClassName" xtype="textfield" />
+			<column label="牌号编码" prop="skuNo" xtype="textfield" hidden="true" />
+			<column label="牌号名称" prop="skuName" xtype="textfield" />
+			<column label="产品编码" prop="materielNo" xtype="textfield" hidden="true" />
+			<column label="产品名称" prop="materielName" xtype="textfield" />
+			<column label="币种" prop="currency" xtype="combo" comboKey="currency" />
+			<column label="贸易类型" prop="tradeType" xtype="combo" comboKey="tradeType" />
+			<column label="单价模式" prop="univalenceModel" xtype="combo" comboKey="djms" />
+			<column label="状态" prop="status" xtype="textfield" />
+			<column label="组织编码" prop="orgNo" xtype="textfield" hidden="true" />
+			<column label="组织名称" prop="orgName" xtype="textfield" />
+			<column label="部门编码" prop="deptNo" xtype="textfield"  hidden="true" />
+			<column label="部门名称" prop="deptName" xtype="textfield" />
+		</gridpanel>
+	</tabpanel>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 新增事件
+			if (t.id == "add") {
+				var data = {prefixTitle: "新增"};
+				handleRoute("productPriceForm", data);
+			}
+			// 修改事件
+			if (t.id == "edit") {
+				var records = Ext.getCmp("productPriceListNew").getSelectionModel().getSelection();
+				if (records.length != 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行修改!");
+					return false;
+				}
+				var data = {id: records[0].id, prefixTitle: "修改"};
+				handleRoute("productPriceForm", data);
+			}
+			// 删除事件
+			if (t.id == "delete") {
+				var records = Ext.getCmp("productPriceListNew").getSelectionModel().getSelection();
+				if (records.length < 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行删除!");
+					return false;
+				}
+				handleDelConfirm("/webapi/marketing/productPrice/delete", records, Ext.getCmp("productPriceListNew"));
+			}
+			// 提交事件
+			if (t.id == "commit") {
+			}
+			// 审核通过事件
+			if (t.id == "pass") {
+			}
+			// 审核拒绝事件
+			if (t.id == "refuse") {
+			}
+		}
+	]]></script>
+</page>

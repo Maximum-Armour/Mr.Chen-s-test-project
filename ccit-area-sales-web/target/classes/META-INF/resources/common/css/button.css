@@ -1,0 +1,43 @@
+.searchButton {
+	background-image: url(../images/search.png) !important;
+}
+
+.addButton {
+	background-image: url(../images/add.png) !important;
+}
+
+.editButton {
+	background-image: url(../images/edit.png) !important;
+}
+
+.deleteButton {
+	background-image: url(../images/delete.png) !important;
+}
+
+.saveButton {
+	background-image: url(../images/save.png) !important;
+}
+
+.closeButton {
+	background-image: url(../images/close.png) !important;
+}
+
+.excelButton {
+	background-image: url(../images/excel.png) !important;
+}
+
+.importButton {
+	background-image: url(../images/import.png) !important;
+}
+
+.commitButton {
+	background-image: url(../images/commit.png) !important;
+}
+
+.passButton {
+	background-image: url(../images/pass.png) !important;
+}
+
+.refuseButton {
+	background-image: url(../images/refuse.png) !important;
+}

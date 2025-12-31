@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.6.10</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.ccit</groupId>
+	<artifactId>ccit-area-sales</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	
+	<modules>
+		<module>ccit-area-sales-api</module>
+		<module>ccit-area-sales-common</module>
+		<module>ccit-area-sales-dao</module>
+		<module>ccit-area-sales-rpc</module>
+		<module>ccit-area-sales-service</module>
+		<module>ccit-area-sales-web</module>
+		<module>ccit-area-sales-job</module>
+		<module>ccit-area-sales-mobile</module>
+		<module>ccit-area-sales-openapi</module>
+	</modules>
+
+	<properties>
+		<nexus.url>http://172.16.192.15:8081/</nexus.url>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>2021.0.4</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.cloud</groupId>
+				<artifactId>spring-cloud-alibaba-dependencies</artifactId>
+				<version>2021.0.4.0</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.30</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>1.2.83</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.ccit</groupId>
+				<artifactId>ccit-common-utils</artifactId>
+				<version>1.0.RELEASE</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.pagehelper</groupId>
+				<artifactId>pagehelper</artifactId>
+				<version>5.1.10</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>5.3.22</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.baomidou</groupId>
+				<artifactId>mybatis-plus-boot-starter</artifactId>
+				<version>3.4.0</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.baomidou</groupId>
+				<artifactId>mybatis-plus-extension</artifactId>
+				<version>3.4.0</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.baomidou</groupId>
+				<artifactId>mybatis-plus-generator</artifactId>
+				<version>3.4.0</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.baomidou</groupId>
+				<artifactId>mybatis-plus-annotation</artifactId>
+				<version>3.4.0</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.baomidou</groupId>
+				<artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+				<version>3.5.0</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>1.18.22</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-ui</artifactId>
+				<version>1.7.0</version>
+				<scope>provided</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-logging</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.ccit</groupId>
+			<artifactId>ccit-common-utils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.xiaoymin</groupId>
+			<artifactId>knife4j-springdoc-ui</artifactId>
+			<version>3.0.3</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-archetype-plugin</artifactId>
+				<version>3.1.2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<source>11</source>
+					<target>11</target>
+					<compilerArgs>
+						<arg>-Xlint:deprecation</arg>
+						<arg>-Xlint:unchecked</arg>
+					</compilerArgs>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>1.18.22</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-checkstyle-plugin</artifactId> -->
+<!-- 				<version>3.1.2</version> -->
+<!-- 				<configuration> -->
+<!-- 					<configLocation>style/checkstyle.xml</configLocation> -->
+<!-- 					<failsOnError>true</failsOnError> -->
+<!-- 				</configuration> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>checkstyle-check</id> -->
+<!-- 						<phase>package</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>check</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 				<dependencies> -->
+<!-- 					<dependency> -->
+<!-- 						<groupId>com.puppycrawl.tools</groupId> -->
+<!-- 						<artifactId>checkstyle</artifactId> -->
+<!-- 						<version>8.44</version> -->
+<!-- 					</dependency> -->
+<!-- 				</dependencies> -->
+<!-- 			</plugin> -->
+		</plugins>
+	</build>
+	
+	<distributionManagement>
+		<repository>
+			<id>nexus-releases</id>
+			<name>project release repository</name>
+			<url>${nexus.url}repository/maven-releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<name>project snapshot repository</name>
+			<url>${nexus.url}repository/maven-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+	
+</project>

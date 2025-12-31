@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="chooseErpMateriel" version="1.0">
+	<window id="erpMaterielWin" title="选择ERP产品" autoScroll="true" width="800" height="600" resize="false" maximizable="true">
+		<gridpanel id="erpMaterie" url="/webapi/archives/erp/materiel/page/list" mode="single">
+			<column label="ERP产品编码" prop="erpMaterielNo" xtype="textfield" />
+			<column label="ERP产品名称" prop="erpMaterielName" xtype="textfield" width="400" />
+			<column label="ERP产品属性" prop="erpMaterielShowdesc" xtype="textfield" />
+		</gridpanel>
+		<button id="erpMaterieVerify" text="确定" iconCls="commitButton" handler="CrrHandler" callback="confirm" />
+	</window>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 确定事件
+			if (t.id == "erpMaterieVerify") {
+				var records = Ext.getCmp("erpMaterie").getSelectionModel().getSelection();
+				if (records.length != 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行确认!");
+					return false;
+				}
+				eval(t.callback + "(records[0].data)");
+				erpMaterielWin.close();
+			}
+		}
+	]]></script>
+</page>

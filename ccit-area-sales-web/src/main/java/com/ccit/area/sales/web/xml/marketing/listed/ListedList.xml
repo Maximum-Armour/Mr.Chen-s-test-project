@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="listedList" version="1.0">
+	<tabpanel id="entrance">
+		<gridpanel id="listedListNew" title="挂牌管理&lt;新增&gt;" url="/webapi/marketing/listed/page/list" param="{status: '未提交'}">
+			<column label="主键ID" prop="id" xtype="numberfield" hidden="true" />
+			<column label="挂牌编码" prop="listedNo" xtype="textfield" renderer="linkurl" route="listedForm" />
+			<column label="上下架状态" prop="useStatus" xtype="textfield" hidden="true" />
+			<column label="挂牌模式" prop="listedMode" xtype="combo" comboKey="listedMode" />
+			<column label="牌号编码" prop="skuNo" xtype="textfield" hidden="true" />
+			<column label="牌号名称" prop="skuName" xtype="textfield" />
+			<column label="区域编码" prop="areaNo" xtype="textfield" hidden="true" />
+			<column label="区域名称" prop="areaName" xtype="textfield" />
+			<column label="提货地分类编码" prop="deliveryPlaceClassNo" xtype="textfield" hidden="true" />
+			<column label="提货地分类名称" prop="deliveryPlaceClassName" xtype="textfield" />
+			<column label="支付方式" prop="payWay" xtype="textfield" comboKey="zhlx" />
+			<column label="挂牌不含税单价" prop="listedPrice" xtype="textfield" hidden="true" />
+			<column label="挂牌含税单价" prop="listedTaxPrice" xtype="textfield" />
+			<column label="单价单位" prop="unit" xtype="combo" comboKey="priceUnit" />
+			<column label="有效开始时间" prop="effectiveEndTime" xtype="textfield" />
+			<column label="有效结束时间" prop="effectiveStartTime" xtype="textfield" />
+			<column label="贸易类型" prop="tradeType" xtype="combo" comboKey="tradeType" />
+			<column label="状态" prop="status" xtype="textfield" />
+			<column label="组织编码" prop="orgNo" xtype="textfield" hidden="true" />
+			<column label="组织名称" prop="orgName" xtype="textfield" />
+			<column label="部门编码" prop="deptNo" xtype="textfield" hidden="true" />
+			<column label="部门名称" prop="deptName" xtype="textfield" />
+			<column label="创建时间" prop="gmtCreate" xtype="textfield" width="160" />
+			<toolbar id="listedListNewTb">
+				<button id="add" text="新增" iconCls="addButton" handler="CrrHandler" />
+				<button id="edit" text="修改" iconCls="editButton" handler="CrrHandler" />
+				<button id="delete" text="删除" iconCls="deleteButton" handler="CrrHandler" />
+				<button id="commit" text="提交" iconCls="commitButton" handler="CrrHandler" />
+			</toolbar>
+		</gridpanel>
+		<gridpanel id="listedListAdd" title="挂牌管理&lt;上下架&gt;" url="/webapi/marketing/listed/page/list" param="{status: '审核完成'}">
+			<column label="主键ID" prop="id" xtype="numberfield" hidden="true" />
+			<column label="挂牌编码" prop="listedNo" xtype="textfield" renderer="linkurl" route="listedForm" />
+			<column label="上下架状态" prop="useStatus" xtype="textfield" hidden="true" />
+			<column label="挂牌模式" prop="listedMode" xtype="combo" comboKey="listedMode" />
+			<column label="牌号编码" prop="skuNo" xtype="textfield" hidden="true" />
+			<column label="牌号名称" prop="skuName" xtype="textfield" />
+			<column label="区域编码" prop="areaNo" xtype="textfield" hidden="true" />
+			<column label="区域名称" prop="areaName" xtype="textfield" />
+			<column label="提货地分类编码" prop="deliveryPlaceClassNo" xtype="textfield" hidden="true" />
+			<column label="提货地分类名称" prop="deliveryPlaceClassName" xtype="textfield" />
+			<column label="支付方式" prop="payWay" xtype="textfield" comboKey="zhlx" />
+			<column label="挂牌不含税单价" prop="listedPrice" xtype="textfield" hidden="true" />
+			<column label="挂牌含税单价" prop="listedTaxPrice" xtype="textfield" />
+			<column label="单价单位" prop="unit" xtype="combo" comboKey="priceUnit" />
+			<column label="有效开始时间" prop="effectiveEndTime" xtype="textfield" />
+			<column label="有效结束时间" prop="effectiveStartTime" xtype="textfield" />
+			<column label="贸易类型" prop="tradeType" xtype="combo" comboKey="tradeType" />
+			<column label="状态" prop="status" xtype="textfield" />
+			<column label="组织编码" prop="orgNo" xtype="textfield" hidden="true" />
+			<column label="组织名称" prop="orgName" xtype="textfield" />
+			<column label="部门编码" prop="deptNo" xtype="textfield" hidden="true" />
+			<column label="部门名称" prop="deptName" xtype="textfield" />
+			<column label="创建时间" prop="gmtCreate" xtype="textfield" width="160" />
+			<toolbar id="listedListTb">
+				<button id="upper" text="上架" iconCls="commitButton" handler="CrrHandler" />
+				<button id="lower" text="下架" iconCls="deleteButton" handler="CrrHandler" />
+			</toolbar>
+		</gridpanel>
+	</tabpanel>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 新增事件
+			if (t.id == "add") {
+				var data = {confirm: "listedListNew", prefixTitle: "新增"};
+				handleRoute("ChooseProductPriceItem", data);
+			}
+			// 修改事件
+			if (t.id == "edit") {
+				var records = Ext.getCmp("listedListNew").getSelectionModel().getSelection();
+				if (records.length != 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行修改!");
+					return false;
+				}
+				var data = {id: records[0].id, prefixTitle: "修改"};
+				handleRoute("listedForm", data);
+			}
+			// 删除事件
+			if (t.id == "delete") {
+				var records = Ext.getCmp("listedListNew").getSelectionModel().getSelection();
+				if (records.length < 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行删除!");
+					return false;
+				}
+				handleDelConfirm("/webapi/marketing/listed/delete", records, Ext.getCmp("listedListNew"));
+			}
+		}
+	]]></script>
+</page>

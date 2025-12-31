@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.system.SystemLogMapper">
+
+	<!-- 分页列表，支持分页查询和高级查询  -->
+	<select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.system.SystemLogPageListVO" parameterType="map">
+		SELECT
+  			t_system_log.module_name AS moduleName,
+			t_system_log.module_desc AS moduleDesc,
+			t_system_log.business_type AS businessType,
+			t_system_log.method AS method,
+			t_system_log.request_method AS requestMethod,
+			t_system_log.request_path AS requestPath, 
+			t_system_log.request_ip AS requestIp,
+			t_system_log.request_param AS requestParam,
+			t_system_log.json_result AS jsonResult,
+			t_system_log.`status`,
+			t_system_log.error_msg AS errorMsg
+		FROM
+			t_system_log
+		<where>
+			<if test="param.moduleName != null and param.moduleName != ''">
+				AND t_system_log.module_name LIKE CONCAT('%', #{param.moduleName}, '%')
+			</if>
+			<if test="param.moduleDesc != null and param.moduleDesc != ''">
+				AND t_system_log.module_desc LIKE CONCAT('%', #{param.moduleDesc}, '%')
+			</if>
+			<if test="param.businessType != null and param.businessType != ''">
+				AND t_system_log.business_type LIKE CONCAT('%', #{param.businessType}, '%')
+			</if>
+			<if test="param.method != null and param.method != ''">
+				AND t_system_log.method LIKE CONCAT('%', #{param.method}, '%')
+			</if>
+			<if test="param.requestMethod != null and param.requestMethod != ''">
+				AND t_system_log.request_method LIKE CONCAT('%', #{param.requestMethod}, '%')
+			</if>
+			<if test="param.requestPath != null and param.requestPath != ''">
+				AND t_system_log.request_path LIKE CONCAT('%', #{param.requestPath}, '%')
+			</if>
+			<if test="param.requestIp != null and param.requestIp != ''">
+				AND t_system_log.request_ip LIKE CONCAT('%', #{param.requestIp}, '%')
+			</if>
+			<if test="param.requestParam != null and param.requestParam != ''">
+				AND t_system_log.request_param LIKE CONCAT('%', #{param.requestParam}, '%')
+			</if>
+			<if test="param.jsonResult != null and param.jsonResult != ''">
+				AND t_system_log.json_result LIKE CONCAT('%', #{param.jsonResult}, '%')
+			</if>
+			<if test="param.status != null and param.status != ''">
+				AND t_system_log.`status` LIKE CONCAT('%', #{param.status}, '%')
+			</if>
+			<if test="param.errorMsg != null and param.errorMsg != ''">
+				AND t_system_log.error_msg LIKE CONCAT('%', #{param.errorMsg}, '%')
+			</if>
+		</where>
+		ORDER BY
+			t_system_log.gmt_create DESC
+	</select>
+
+</mapper>

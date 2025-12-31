@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.system.SystemFileMapper">
+
+    <!-- 分页列表，支持分页查询和高级查询 -->
+    <select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.system.SystemFilePageListVO">
+        SELECT
+        t_system_file.id,
+        t_system_file.business_code AS businessCode,
+        t_system_file.file_name AS fileName,
+        t_system_file.file_suffix AS fileSuffix,
+        t_system_file.update_by_name AS updateByName,
+        t_system_file.gmt_modified AS gmtModified
+        FROM
+        t_system_file
+        WHERE
+        t_system_file.is_deleted = '0'
+        AND t_system_file.business_code = #{businessCode}
+    </select>
+
+    <!-- 分页列表，支持分页查询和高级查询 -->
+    <select id="uploadFile" resultType="java.lang.String" parameterType="map">
+        SELECT
+            t_system_file.file_path AS filePath
+        FROM
+            t_system_file
+        WHERE
+            t_system_file.is_deleted = '0'
+          AND t_system_file.file_name = #{fileName}
+          AND t_system_file.business_id = #{businessId}
+          AND t_system_file.business_code = #{businessCode}
+    </select>
+</mapper>

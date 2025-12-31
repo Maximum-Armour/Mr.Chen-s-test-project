@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.customerprofile.CustomerQualificationMapper">
+
+    <select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.customer.TCustomerQualificationVO">
+        SELECT
+        id,
+        customer_name,
+        qualification_type,
+        expiration_date,
+        user_name,
+        attachment_id,
+        create_time,
+        audit_status,
+        remark
+        FROM t_customer_qualification
+        <where>
+            is_deleted = #{param.is_deleted}
+            <if test="param.customerName != null and param.customerName != ''">
+                AND customer_name LIKE CONCAT('%'#{param.customerName}'%')
+            </if>
+            <if test="param.qualificationType != null and param.qualificationType != ''">
+                AND qualification_type LIKE CONCAT('%'#{param.qualificationType}'%')
+            </if>
+            <if test="param.expirationDate != null and param.expirationDate != ''">
+                AND expiration_date LIKE CONCAT('%',#{param.expirationDate},'%')
+            </if>
+            <if test="param.userName != null and param.userName != ''">
+                AND user_name LIKE CONCAT('%',#{param.userName},'%')
+            </if>
+            <if test="param.attachmentId != null">
+                AND attachment_id = #{param.attachmentId}
+            </if>
+            <if test="param.createTime != null and param.createTime != ''">
+                AND create_time LIKE CONCAT('%',#{param.createTime},'%')
+            </if>
+            <if test="param.auditStatus != null and param.auditStatus != ''">
+                AND audit_status LIKE CONCAT('%',#{param.auditStatus},'%')
+            </if>
+        <if test="param.remark != null and param.remark != ''" >
+            AND remark LIKE CONCAT('%',#{param.remark},'%')
+        </if>
+        </where>
+    </select>
+</mapper>

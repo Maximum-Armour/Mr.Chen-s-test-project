@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="chooseSkuFile" version="1.0">
+	<window id="skuFileWin" title="选择牌号档案" autoScroll="true" width="800" height="600" resize="false" maximizable="true">
+		<gridpanel id="skuFile" url="/webapi/archives/skuFile/page/list" mode="single">
+			<column label="牌号编码" prop="skuNo" xtype="textfield" />
+			<column label="牌号名称" prop="skuName" xtype="textfield" />
+			<column label="主副产品" prop="mainOrByproduct" xtype="combo" comboKey="zfproduct" />
+			<column label="执行标准" prop="executiveStandard" xtype="combo" comboKey="zxbz" />
+			<column label="标准号" prop="standardNumber" xtype="textfield" />
+		</gridpanel>
+		<button id="skuFileVerify" text="确定" iconCls="commitButton" handler="CrrHandler" callback="confirm" />
+	</window>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 确定事件
+			if (t.id == "skuFileVerify") {
+				var records = Ext.getCmp("skuFile").getSelectionModel().getSelection();
+				if (records.length != 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行确认!");
+					return false;
+				}
+				eval(t.callback + "(records[0].data)");
+				skuFileWin.close();
+			}
+		}
+	]]></script>
+</page>

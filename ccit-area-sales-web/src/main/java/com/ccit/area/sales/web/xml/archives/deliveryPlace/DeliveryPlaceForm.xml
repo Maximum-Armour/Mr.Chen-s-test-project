@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="deliveryPlaceForm" version="1.0">
+	<window id="deliveryPlaceFormWin" title="提货地档案" layout="vbox" autoScroll="true">
+		<formpanel id="deliveryPlaceForm" columns="1" height="320" method="/webapi/archives/deliveryPlace/get?id=#{id}">
+			<formwidget xtype="filesetBegin" title="基本信息" columns="4"/>
+			<formwidget fieldLabel="主键ID" fieldProp="id" xtype="textfield" hidden="true" allowBlank="true" />
+			<formwidget fieldLabel="提货地编码" fieldProp="deliveryPlaceNo" xtype="textfield" />
+			<formwidget fieldLabel="提货地名称" fieldProp="deliveryPlaceName" xtype="textfield" />
+			<formwidget fieldLabel="提货地分类编码" fieldProp="deliveryPlaceClassNo" xtype="textfield" hidden="true" allowBlank="true" />
+			<formwidget fieldLabel="提货地分类名称" fieldProp="deliveryPlaceClassName" xtype="trigger" onTriggerClick="chooseDeliveryPlaceClass" />
+			<formwidget fieldLabel="详细地址" fieldProp="deliveryAddress" xtype="textfield" />
+			<formwidget fieldLabel="联系人" fieldProp="contacts" xtype="textfield" />
+			<formwidget fieldLabel="联系电话" fieldProp="contactsTelephone" xtype="textfield" />
+			<formwidget fieldLabel="状态" fieldProp="status" xtype="combo" key="status" value="SY" />
+			<formwidget xtype="filesetEnd" />
+			<formwidget xtype="filesetBegin" title="制单用户信息" columns="4"/>
+			<formwidget fieldLabel="制单人" fieldProp="createByName" xtype="displayfield" />
+			<formwidget fieldLabel="制单时间" fieldProp="gmtCreate" xtype="displayfield" />
+			<formwidget fieldLabel="单位名称" fieldProp="orgName" xtype="displayfield" />
+			<formwidget fieldLabel="部门名称" fieldProp="deptName" xtype="displayfield" />
+			<formwidget fieldLabel="最后修改人" fieldProp="updateByName" xtype="displayfield" />
+			<formwidget fieldLabel="最后修改时间" fieldProp="gmtModified" xtype="displayfield" />
+			<formwidget xtype="filesetEnd" />
+		</formpanel>
+		<gridpanel id="deliveryPlaceDepotList" title="仓库档案" url="/webapi/archives/deliveryPlace/depot/page/list" 
+				flex="1" style="margin: 0px 15px 15px 15px;" param="id">
+			<column label="主键ID" prop="id" xtype="textfield" hidden="true" />
+			<column label="仓库编码" prop="depotNo" xtype="textfield" />
+			<column label="仓库名称" prop="depotName" xtype="textfield" />
+			<column label="是否港口" prop="isPort" xtype="combo" comboKey="port" />
+			<column label="是否中转库" prop="isTransit" xtype="combo" comboKey="transit" />
+			<column label="状态" prop="status" xtype="combo" comboKey="status" />
+			<column label="管理员" prop="manager" xtype="textfield" />
+			<column label="管理员联系电话" prop="managerTelephone" xtype="textfield" />
+			<toolbar id="deliveryPlaceDepotTb">
+				<button id="dpdNew" text="新增" iconCls="addButton" handler="CrrHandler" />
+				<button id="dpdDelete" text="删除" iconCls="deleteButton" handler="CrrHandler" />
+			</toolbar>
+		</gridpanel>
+		<button id="save" text="保存" iconCls="saveButton" handler="CrrHandler" />
+	</window>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 保存&更新事件
+			if (t.id == "save") {
+				var formpanel = Ext.getCmp("deliveryPlaceForm").getForm();
+				if (formpanel.isValidCux()) {
+					var gridpanel = Ext.getCmp("deliveryPlaceDepotList");
+					var gridpanelData = gridpanel.getStore().getData();
+					if (gridpanel.operateArray.length === 0 && gridpanelData.length === 0) {
+						Ext.MessageBox.alert("提示", "请选择仓库档案");
+						return false;
+					}
+					var data = formpanel.getValues();
+					data.depotNos = gridpanel.operateArray.map(obj => obj.data.depotNo).join(',');
+					var url = "/webapi/archives/deliveryPlace/add";
+					if (data.id != null && data.id != "") {
+						url = "/webapi/archives/deliveryPlace/edit";
+					}
+					post(url, data, function(res) {
+						Ext.MessageBox.alert("提示", res.msg);
+						Ext.getCmp('deliveryPlaceList').getStore().load();
+						Ext.getCmp('deliveryPlaceFormWin').close();
+					});
+				}
+			}
+			// 【仓库档案】新增事件
+			if (t.id == "dpdNew") {
+				var panel = Ext.getCmp('deliveryPlaceDepotList');
+				var notIdList = getArrayAttribute(panel, 'id');
+				var items = panel.getStore().getData().items;
+				if (items.length > 0) {
+					notIdList += "," + items.map(obj => obj.data.depotId).join(',');
+				}
+				var data = {
+					confirm: "depotConfirm", 
+					param: "notIdList: '" + notIdList + "' "
+				};
+				handleRoute("ChooseDepot", data);
+			}
+			// 【仓库档案】删除事件
+			if (t.id == "dpdDelete") {
+				var records = Ext.getCmp("deliveryPlaceDepotList").getSelectionModel().getSelection();
+				if (records.length < 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行删除!");
+					return false;
+				}
+				handleDelConfirm("/webapi/archives/deliveryPlace/depot/delete", records, Ext.getCmp("deliveryPlaceDepotList"));
+			}
+		}
+		// 提货地分类列表
+		function chooseDeliveryPlaceClass() {
+			var data = {confirm: "deliveryPlaceClassConfirm"};
+			handleRoute("ChooseDeliveryPlaceClass", data);
+		}
+		// 提货地分类确定事件
+		function deliveryPlaceClassConfirm(data) {
+			var form = Ext.getCmp("deliveryPlaceForm").getForm();
+			form.findField("deliveryPlaceClassNo").setValue(data.deliveryPlaceClassNo);
+			form.findField("deliveryPlaceClassName").setValue(data.deliveryPlaceClassName);
+		}
+		// 仓库档案确认事件
+		function depotConfirm(data) {
+			setArrayData(Ext.getCmp('deliveryPlaceDepotList'), data);
+			Ext.getCmp('deliveryPlaceDepotList').getStore().load();
+		}
+		// 重写加载事件
+		Ext.getCmp('deliveryPlaceDepotList').getStore().on('load', function(store) {
+			var panel = Ext.getCmp('deliveryPlaceDepotList');
+			store.add(panel.operateArray);
+			panel.down('pagingtoolbarcustom').updatePagingInfo(store.getCount(), store.pageSize);
+		});
+	]]></script>
+</page>

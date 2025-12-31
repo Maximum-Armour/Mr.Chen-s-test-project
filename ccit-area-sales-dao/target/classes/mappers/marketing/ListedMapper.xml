@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.marketing.ListedMapper">
+
+    <!-- 分页列表，支持分页查询和高级查询 -->
+    <select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.marketing.ListedPageListVO" parameterType="map">
+        SELECT
+        t_listed.id,
+        t_listed.status,
+        t_listed.listed_no AS listedNo,
+        t_listed.listed_mode AS listedMode,
+        t_listed.listed_price AS listedPrice,
+        t_listed.listed_tax_price AS listedTaxPrice,
+        t_listed.benchmark_price AS benchmarkPrice,
+        t_listed.price_model AS priceModel,
+        t_listed.use_status AS useStatus,
+        t_listed.distribution_way AS distributionWay,
+        t_listed.transport_way AS transportWay,
+        t_listed.pay_way AS payWay,
+        t_listed.effective_start_time AS effectiveStartTime,
+        t_listed.effective_end_time AS effectiveEndTime,
+        t_listed.currency,
+        t_listed.trade_type AS tradeType,
+        t_listed.unit,
+        t_listed.unit_weight AS unitWeight,
+        t_listed.area_no AS areaNo,
+        t_listed.area_name AS areaName,
+        t_listed.delivery_place_no AS deliveryPlaceNo,
+        t_listed.delivery_place_name AS deliveryPlaceName,
+        t_listed.delivery_place_class_no AS deliveryPlaceClassNo,
+        t_listed.delivery_place_class_name AS deliveryPlaceClassName,
+        t_listed.product_class_no AS productClassNo,
+        t_listed.product_class_name AS productClassName,
+        t_listed.sku_no AS skuNo,
+        t_listed.sku_name AS skuName,
+        t_listed.materiel_no AS materielNo,
+        t_listed.materiel_name AS materielName,
+        t_listed.org_no AS orgNo,
+        t_listed.org_name AS orgName,
+        t_listed.gmt_create AS gmtCreate,
+        t_listed.company_no AS companyNo
+        FROM
+        t_listed
+        LEFT JOIN t_system_user
+        ON t_listed.create_by = t_system_user.id
+        WHERE
+        t_listed.is_deleted = #{param.deleted}
+        AND t_listed.effective_start_time <![CDATA[<=CURRENT_TIMESTAMP]]>
+        AND t_listed.effective_end_time <![CDATA[>=CURRENT_TIMESTAMP]]>
+        AND t_listed.org_no IN
+        <foreach item="item" index="index" collection="param.orgNoList"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="param.userName != null and param.userName != ''">
+            AND t_system_user.user_name LIKE CONCAT('%', #{param.userName}, '%')
+        </if>
+        <if test="param.orgNo != null and param.orgNo != ''">
+            AND t_listed.org_no LIKE CONCAT('%', #{param.orgNo}, '%')
+        </if>
+        <if test="param.status != null and param.status != ''">
+            AND t_listed.status LIKE CONCAT('%', #{param.status}, '%')
+        </if>
+        <if test="param.listedNo != null and param.listedNo != ''">
+            AND t_listed.listed_no LIKE CONCAT('%', #{param.listedNo}, '%')
+        </if>
+        <if test="param.listedMode != null and param.listedMode != ''">
+            AND t_listed.listed_mode LIKE CONCAT('%', #{param.listedMode}, '%')
+        </if>
+        <if test="param.listedPrice != null and param.listedPrice != ''">
+            AND t_listed.listed_price LIKE CONCAT('%', #{param.listedPrice}, '%')
+        </if>
+        <if test="param.listedTaxPrice != null and param.listedTaxPrice != ''">
+            AND t_listed.listed_tax_price LIKE CONCAT('%', #{param.listedTaxPrice}, '%')
+        </if>
+        <if test="param.benchmarkPrice != null and param.benchmarkPrice != ''">
+            AND t_listed.benchmark_price LIKE CONCAT('%', #{param.benchmarkPrice}, '%')
+        </if>
+        <if test="param.priceModel != null and param.priceModel != ''">
+            AND t_listed.price_model LIKE CONCAT('%', #{param.priceModel}, '%')
+        </if>
+        <if test="param.useStatus != null and param.useStatus != ''">
+            AND t_listed.use_status LIKE CONCAT('%', #{param.useStatus}, '%')
+        </if>
+        <if test="param.distributionWay != null and param.distributionWay != ''">
+            AND t_listed.distribution_way LIKE CONCAT('%', #{param.distributionWay}, '%')
+        </if>
+        <if test="param.transportWay != null and param.transportWay != ''">
+            AND t_listed.transport_way LIKE CONCAT('%', #{param.transportWay}, '%')
+        </if>
+        <if test="param.payWay != null and param.payWay != ''">
+            AND t_listed.pay_way LIKE CONCAT('%', #{param.payWay}, '%')
+        </if>
+        <if test="param.currency != null and param.currency != ''">
+            AND t_listed.currency LIKE CONCAT('%', #{param.currency}, '%')
+        </if>
+        <if test="param.tradeType != null and param.tradeType != ''">
+            AND t_listed.trade_type LIKE CONCAT('%', #{param.tradeType}, '%')
+        </if>
+        <if test="param.unit != null and param.unit != ''">
+            AND t_listed.unit LIKE CONCAT('%', #{param.unit}, '%')
+        </if>
+        <if test="param.unitWeight != null and param.unitWeight != ''">
+            AND t_listed.unit_weight LIKE CONCAT('%', #{param.unitWeight}, '%')
+        </if>
+        <if test="param.areaNo != null and param.areaNo != ''">
+            AND t_listed.area_no LIKE CONCAT('%', #{param.areaNo}, '%')
+        </if>
+        <if test="param.areaName != null and param.areaName != ''">
+            AND t_listed.area_name LIKE CONCAT('%', #{param.areaName}, '%')
+        </if>
+        <if test="param.deliveryPlaceNo != null and param.deliveryPlaceNo != ''">
+            AND t_listed.delivery_place_no LIKE CONCAT('%', #{param.deliveryPlaceNo}, '%')
+        </if>
+        <if test="param.deliveryPlaceName != null and param.deliveryPlaceName != ''">
+            AND t_listed.delivery_place_name LIKE CONCAT('%', #{param.deliveryPlaceName}, '%')
+        </if>
+        <if test="param.deliveryPlaceClassNo != null and param.deliveryPlaceClassNo != ''">
+            AND t_listed.delivery_place_class_no LIKE CONCAT('%', #{param.deliveryPlaceClassNo}, '%')
+        </if>
+        <if test="param.deliveryPlaceClassName != null and param.deliveryPlaceClassName != ''">
+            AND t_listed.delivery_place_class_name LIKE CONCAT('%', #{param.deliveryPlaceClassName}, '%')
+        </if>
+        <if test="param.productClassNo != null and param.productClassNo != ''">
+            AND t_listed.product_class_no LIKE CONCAT('%', #{param.productClassNo}, '%')
+        </if>
+        <if test="param.productClassName != null and param.productClassName != ''">
+            AND t_listed.product_class_name LIKE CONCAT('%', #{param.productClassName}, '%')
+        </if>
+        <if test="param.skuNo != null and param.skuNo != ''">
+            AND t_listed.sku_no LIKE CONCAT('%', #{param.skuNo}, '%')
+        </if>
+        <if test="param.skuName != null and param.skuName != ''">
+            AND t_listed.sku_name LIKE CONCAT('%', #{param.skuName}, '%')
+        </if>
+        <if test="param.materielNo != null and param.materielNo != ''">
+            AND t_listed.materiel_no LIKE CONCAT('%', #{param.materielNo}, '%')
+        </if>
+        <if test="param.materielName != null and param.materielName != ''">
+            AND t_listed.materiel_name LIKE CONCAT('%', #{param.materielName}, '%')
+        </if>
+        <if test="param.orgName != null and param.orgName != ''">
+            AND t_listed.org_name LIKE CONCAT('%', #{param.orgName}, '%')
+        </if>
+        ORDER BY
+        t_listed.gmt_modified DESC
+    </select>
+
+    <update id="listedStatus">
+        UPDATE t_listed
+        SET t_listed.listed_status = #{param.approvalStatus}
+        WHERE t_listed.id = #{param.id}
+    </update>
+
+    <select id="orgNoAbbreviation" resultType="java.lang.String">
+        select t_system_org.org_no_abbreviation
+        from t_system_org
+        where t_system_org.org_no = #{orgNo}
+    </select>
+
+    <select id="selectOrgNo" resultType="java.lang.String">
+        SELECT t_system_org.org_no
+        FROM t_system_org
+        WHERE t_system_org.id =
+              (SELECT t_system_org.parent_id
+               FROM t_system_org
+               WHERE t_system_org.org_no = #{orgNo})
+    </select>
+
+    <select id="selectOrgName" resultType="java.lang.String">
+        SELECT t_system_org.org_name
+        FROM t_system_org
+        WHERE t_system_org.org_no = #{orgNo}
+    </select>
+</mapper>

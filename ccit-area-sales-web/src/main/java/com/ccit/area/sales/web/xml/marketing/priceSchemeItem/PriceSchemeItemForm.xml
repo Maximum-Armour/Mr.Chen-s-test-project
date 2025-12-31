@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="priceSchemeItemForm" version="1.0">
+	<window id="priceSchemeItemFormWin" title="定价方案明细" autoScroll="true" width="700" height="550" resize="false" maximizable="true">
+		<formpanel id="priceSchemeItemForm" columns="1" height="320" method="">
+			<formwidget xtype="filesetBegin" title="基本信息" columns="2"/>
+			<formwidget fieldLabel="主键ID" fieldProp="id" xtype="textfield" hidden="true" allowBlank="true" />
+			<formwidget fieldLabel="区域编码" fieldProp="areaNo" xtype="textfield" hidden="true" allowBlank="true" />
+			<formwidget fieldLabel="区域名称" fieldProp="areaName" xtype="trigger" onTriggerClick="chooseSalesArea" />
+			<formwidget fieldLabel="提货地编码" fieldProp="deliveryPlaceNo" xtype="textfield" hidden="true" allowBlank="true" />
+			<formwidget fieldLabel="提货地名称" fieldProp="deliveryPlaceName" xtype="trigger" clearKeys="deliveryPlaceClassName" onTriggerClick="chooseDeliveryPlace" />
+			<formwidget fieldLabel="提货地分类编码" fieldProp="deliveryPlaceClassNo" xtype="textfield" hidden="true" allowBlank="true" />
+			<formwidget fieldLabel="提货地分类名称" fieldProp="deliveryPlaceClassName" xtype="textfield" readOnly="true" emptyTextFlag="false" />
+			<formwidget fieldLabel="配送方式" fieldProp="distributionWay" xtype="combo" key="psfs" value="PS" />
+			<formwidget fieldLabel="运输方式" fieldProp="transportWay" xtype="combo" key="ysfs" value="QY" />
+			<formwidget fieldLabel="支付方式" fieldProp="payWay" xtype="combo" key="zhlx" />
+			<formwidget fieldLabel="币种" fieldProp="currency" xtype="combo" key="currency" value="CNY" />
+			<formwidget fieldLabel="单位" fieldProp="unit" xtype="combo" key="unit" value="MT" />
+			<formwidget xtype="filesetEnd" />
+			<formwidget xtype="filesetBegin" title="制单用户信息" columns="2"/>
+			<formwidget fieldLabel="制单人" fieldProp="createByName" xtype="displayfield" />
+			<formwidget fieldLabel="制单时间" fieldProp="gmtCreate" xtype="displayfield" />
+			<formwidget fieldLabel="单位名称" fieldProp="orgName" xtype="displayfield" />
+			<formwidget fieldLabel="部门名称" fieldProp="deptName" xtype="displayfield" />
+			<formwidget fieldLabel="最后修改人" fieldProp="updateByName" xtype="displayfield" />
+			<formwidget fieldLabel="最后修改时间" fieldProp="gmtModified" xtype="displayfield" />
+			<formwidget xtype="filesetEnd" />
+		</formpanel>
+		<button id="itemSave" text="保存" iconCls="saveButton" handler="CrrHandler" />
+	</window>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 保存事件
+			if (t.id == "itemSave") {
+				if (Ext.getCmp('priceSchemeItemForm').getForm().isValidCux()) {
+					var data = Ext.getCmp("priceSchemeItemForm").getForm().getValues();
+					var panel = Ext.getCmp('priceSchemeItemList');
+					var panelForm = Ext.getCmp('priceSchemeForm').getForm();
+					data.schemeNo = panelForm.findField("schemeNo").getValue();
+					data.schemeItemNo = data.schemeNo + (panel.operateArray.length + 1).toString().padStart(4, '0');
+					setArrayData(panel, [data]);
+					panel.getStore().load();
+					priceSchemeItemFormWin.close();
+				}
+			}
+		}
+		// 提货地档案列表
+		function chooseDeliveryPlace() {
+			var data = {confirm: "deliveryPlaceConfirm"};
+			handleRoute("ChooseDeliveryPlace", data);
+		}
+		// 提货地档案确定事件
+		function deliveryPlaceConfirm(data) {
+			var form = Ext.getCmp("priceSchemeItemForm").getForm();
+			form.findField("deliveryPlaceNo").setValue(data.deliveryPlaceNo);
+			form.findField("deliveryPlaceName").setValue(data.deliveryPlaceName);
+			form.findField("deliveryPlaceClassNo").setValue(data.deliveryPlaceClassNo);
+			form.findField("deliveryPlaceClassName").setValue(data.deliveryPlaceClassName);
+		}
+		// 销售区域列表
+		function chooseSalesArea() {
+			var data = {confirm: "salesAreaConfirm"};
+			handleRoute("ChooseSalesArea", data);
+		}
+		// 销售区域确定事件
+		function salesAreaConfirm(data) {
+			var form = Ext.getCmp("priceSchemeItemForm").getForm();
+			form.findField("areaNo").setValue(data.areaNo);
+			form.findField("areaName").setValue(data.areaName);
+		}
+	]]></script>
+</page>

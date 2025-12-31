@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.system.SystemUserMapper">
+
+    <!-- 分页列表，支持分页查询和高级查询  -->
+    <select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.system.SystemUserPageListVO" parameterType="map">
+        SELECT
+        t_system_user.id,
+        t_system_user.user_name AS userName,
+        t_system_user.real_name AS realName,
+        t_system_user.user_photo AS userPhoto,
+        t_system_user.email,
+        t_system_user.mobile,
+        t_system_user.`status`,
+        CASE t_system_user.`status`
+        WHEN 0 THEN
+        '正常'
+        WHEN 1 THEN
+        '禁用'
+        WHEN 2 THEN
+        '已锁定'
+        ELSE
+        ''
+        END AS statusName,
+        t_system_user.gmt_create AS gmtCreate,
+        t_system_user.gmt_modified AS gmtModified,
+        (
+        SELECT
+        GROUP_CONCAT(t_system_role.role_name)
+        FROM
+        t_system_user_role
+        LEFT JOIN t_system_role ON t_system_user_role.role_id = t_system_role.id
+        WHERE
+        t_system_user_role.user_id = t_system_user.id
+        ) AS roleName
+        FROM
+        t_system_user
+        WHERE
+        t_system_user.is_deleted = #{param.deleted}
+        AND
+        t_system_user.user_name != #{param.neUserName}
+        <if test="param.userName != null and param.userName != ''">
+            AND t_system_user.user_name LIKE CONCAT('%', #{param.userName}, '%')
+        </if>
+        <if test="param.realName != null and param.realName != ''">
+            AND t_system_user.real_name LIKE CONCAT('%', #{param.realName}, '%')
+        </if>
+        <if test="param.mobile != null and param.mobile != ''">
+            AND t_system_user.mobile LIKE CONCAT('%', #{param.mobile}, '%')
+        </if>
+        <if test="param.status != null">
+            AND t_system_user.status = #{param.status}
+        </if>
+        <if test="param.roleId != null">
+            AND EXISTS (
+            SELECT
+            1
+            FROM
+            t_system_user_role
+            WHERE
+            t_system_user_role.user_id = t_system_user.id
+            AND t_system_user_role.role_id = #{param.roleId}
+            )
+        </if>
+        <if test="param.orgId != null">
+            AND EXISTS (
+            SELECT
+            1
+            FROM
+            t_system_user_org
+            WHERE
+            t_system_user_org.user_id = t_system_user.id
+            AND t_system_user_org.org_id = #{param.orgId}
+            )
+        </if>
+        ORDER BY
+        t_system_user.gmt_modified DESC
+    </select>
+
+
+    <select id="selectUserDetails" resultType="com.ccit.area.sales.dao.vo.system.SystemUserDetailVO">
+        select tu.real_name,
+               tu.user_name,
+        tu.dingding_user_id,
+        tso.org_no,
+        tso.dingding_dept_id
+        from t_system_user tu
+        join t_system_user_org tuo on tuo.user_id = tu.id
+        join t_system_org tso on tso.id = tuo.org_id
+        <where>
+            tuo.display_status = '1'
+            and
+            <if test="userName!= null and userName != ''">
+                tu.user_name = #{userName}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectUserDetailsList" resultType="com.ccit.area.sales.dao.vo.system.SystemUserDetailVO">
+        select
+        tu.id as user_id,
+        tu.real_name,
+        tu.user_name,
+        tu.dingding_user_id,
+        tuo.display_status,
+        tso.id as dept_id,
+        tso.org_name,
+        tso.group_code,
+        tso.org_no,
+        tso.dingding_dept_id
+        from t_system_user tu
+        join t_system_user_org tuo on tuo.user_id = tu.id
+        join t_system_org tso on tso.id = tuo.org_id
+        <where>
+            <if test="userName!= null and userName != ''">
+                tu.user_name = #{userName}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOrg" resultType="com.ccit.area.sales.dao.vo.system.SystemOrgVO">
+        select
+        tso.org_no,
+        tso.org_name
+        from t_system_user tu
+        join t_system_user_org tuo on tuo.user_id = tu.id
+        join t_system_org tso on tso.id = tuo.org_id
+        <where>
+            <if test="userName!= null and userName != ''">
+                tu.user_name = #{userName}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOrgType" resultType="com.ccit.area.sales.dao.vo.system.SystemGroupOrgNameVO">
+        select tso.org_no,
+        tuo.org_id,
+        tso.org_name,
+        tso.org_type,
+        tso.parent_id,
+        tuo.display_status
+        from t_system_user tu
+        join t_system_user_org tuo on tuo.user_id = tu.id
+        join t_system_org tso on tso.id = tuo.org_id
+        <where>
+            <if test="userName!= null and userName != ''">
+                tu.user_name = #{userName}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOrgName" resultType="java.lang.String">
+        select t_system_org.org_name
+        from t_system_org
+        where t_system_org.id = #{parentId}
+    </select>
+
+    <select id="selectUserId" resultType="com.ccit.area.sales.dao.vo.system.SystemGroupOrgNameVO">
+        select tso.org_no,
+        tso.org_name,
+        tuo.display_status
+        from t_system_user tu
+        join t_system_user_org tuo on tuo.user_id = tu.id
+        join t_system_org tso on tso.id = tuo.org_id
+        <where>
+            <if test="userName!= null and userName != ''">
+                tu.id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <update id="display">
+        UPDATE
+            t_system_user_org
+        SET
+            t_system_user_org.display_status = 0
+        WHERE t_system_user_org.user_id = #{userId}
+    </update>
+
+    <update id="displayStatus">
+        UPDATE
+            t_system_user_org
+        SET
+            t_system_user_org.display_status = 1
+        WHERE t_system_user_org.org_id = #{orgId}
+        AND t_system_user_org.user_id = #{userId}
+    </update>
+
+    <select id="selectDisplay" resultType="com.ccit.area.sales.dao.vo.system.SystemGroupOrgNameVO">
+        select
+        tuo.display_status
+        from t_system_user tu
+        join t_system_user_org tuo on tuo.user_id = tu.id
+        join t_system_org tso on tso.id = tuo.org_id
+        <where>
+            <if test="userName!= null and userName != ''">
+                tu.id = #{userId}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="getUserName" resultType="com.ccit.area.sales.dao.vo.system.SystemUserDetailsVO">
+       select
+           t_system_user.dingding_user_id AS dingdingUserId
+       from
+           t_system_user
+       where
+           t_system_user.user_name = #{userName}
+    </select>
+</mapper>

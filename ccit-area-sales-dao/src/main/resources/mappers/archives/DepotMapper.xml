@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.archives.DepotMapper">
+
+	<!-- 获取各个子节点数量 -->
+	<select id="getChildrenCount" resultType="java.util.Map" parameterType="map">
+		SELECT
+			t_depot.parent_id AS id,
+			COUNT(t_depot.parent_id) AS count
+		FROM
+			t_depot
+		WHERE
+			t_depot.is_deleted = 0
+		AND
+			t_depot.parent_id IN
+			<foreach item="id" collection="param.list" separator="," open="(" close=")" index="">
+				#{id}
+			</foreach>
+			<if test="param.notId != null and param.notId != ''">
+				AND t_depot.id != #{param.notId}
+			</if>
+		GROUP BY
+			t_depot.parent_id
+	</select>
+	
+	<!-- 分页列表，支持分页查询和高级查询  -->
+	<select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.archives.DepotPageListVO" parameterType="map">
+		SELECT
+			t_depot.id,
+			t_depot.`status`,
+			t_depot.depot_no AS depotNo,
+			t_depot.depot_name AS depotName,
+			t_depot.is_port AS isPort,
+			t_depot.is_transit AS isTransit,
+			t_depot.depot_address AS depotAddress,
+			t_depot.manager,
+			t_depot.manager_telephone AS managerTelephone
+		FROM
+			t_depot
+		WHERE
+			t_depot.is_deleted = #{param.deleted}
+		<if test="param.status != null and param.status != ''">
+			AND t_depot.`status` LIKE CONCAT('%', #{param.status}, '%')
+		</if>
+		<if test="param.depotNo != null and param.depotNo != ''">
+			AND t_depot.depot_no LIKE CONCAT('%', #{param.depotNo}, '%')
+		</if>
+		<if test="param.depotName != null and param.depotName != ''">
+			AND t_depot.depot_name LIKE CONCAT('%', #{param.depotName}, '%')
+		</if>
+		<if test="param.isPort != null and param.isPort != ''">
+			AND t_depot.is_port LIKE CONCAT('%', #{param.isPort}, '%')
+		</if>
+		<if test="param.isTransit != null and param.isTransit != ''">
+			AND t_depot.is_transit LIKE CONCAT('%', #{param.isTransit}, '%')
+		</if>
+		<if test="param.depotAddress != null and param.depotAddress != ''">
+			AND t_depot.depot_address LIKE CONCAT('%', #{param.depotAddress}, '%')
+		</if>
+		<if test="param.manager != null and param.manager != ''">
+			AND t_depot.manager LIKE CONCAT('%', #{param.manager}, '%')
+		</if>
+		<if test="param.managerTelephone != null and param.managerTelephone != ''">
+			AND t_depot.manager_telephone LIKE CONCAT('%', #{param.managerTelephone}, '%')
+		</if>
+		<if test="param.notIdList != null and param.notIdList != '' and param.notIdList.size() > 0">
+			AND t_depot.id NOT IN 
+			<foreach item="id" collection="param.notIdList" separator="," open="(" close=")" index="">
+				#{id}
+			</foreach>
+		</if>
+		ORDER BY
+			t_depot.depot_orders ASC
+	</select>
+
+	<!-- 获取全部节点 -->
+	<select id="getChildrenList" resultType="com.ccit.area.sales.dao.vo.archives.DepotTreeVO" parameterType="map">
+		SELECT
+			t_depot.id,
+			t_depot.status AS status,
+			t_depot.depot_no AS depotNo,
+			t_depot.depot_name AS depotName,
+			t_depot.depot_orders AS depotOrders,
+			t_depot.is_port AS isPort,
+			t_depot.is_transit AS isTransit,
+			t_depot.manager AS manager,
+			t_depot.manager_telephone AS managerTelephone,
+			t_depot.parent_id AS parentId
+		FROM
+			t_depot
+		WHERE
+			t_depot.is_deleted = 0
+		  AND t_depot.parent_id = #{parentId}
+	</select>
+
+	<!-- 获取全部节点 -->
+	<select id="getChildrenLists" resultType="com.ccit.area.sales.dao.vo.archives.DepotTreeVO" parameterType="map">
+		SELECT
+			t_depot.id,
+			t_depot.status AS status,
+			t_depot.depot_no AS depotNo,
+			t_depot.depot_name AS depotName,
+			t_depot.depot_orders AS depotOrders,
+			t_depot.is_port AS isPort,
+			t_depot.is_transit AS isTransit,
+			t_depot.manager AS manager,
+			t_depot.manager_telephone AS managerTelephone,
+			t_depot.parent_id AS parentId
+		FROM
+			t_depot
+		WHERE
+			t_depot.is_deleted = 0
+		  AND t_depot.parent_id = #{parentId}
+		<if test="depotName != null and depotName != ''">
+			AND t_depot.depot_name like CONCAT('%', #{depotName}, '%')
+		</if>
+		<if test="status != null and status != ''">
+			AND t_depot.status = #{status}
+		</if>
+	</select>
+
+	<select id="depotNoCount" resultType="java.lang.Long">
+		SELECT
+		    COUNT(t_depot.depot_no)
+		FROM
+		t_depot
+	</select>
+
+	<update id="updateChildren">
+		UPDATE t_depot
+		SET t_depot.status = #{status}
+		WHERE t_depot.parent_id = #{parentId}
+	</update>
+</mapper>

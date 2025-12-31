@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.archives.DeliveryPlaceClassMapper">
+
+	<!-- 分页列表，支持分页查询和高级查询 -->
+	<select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.archives.DeliveryPlaceClassPageListVO" parameterType="map">
+		SELECT
+			t_delivery_place_class.id,
+			t_delivery_place_class.`status`,
+			t_delivery_place_class.delivery_place_class_no AS deliveryPlaceClassNo,
+			t_delivery_place_class.delivery_place_class_name AS deliveryPlaceClassName,
+			t_delivery_place_class.delivery_place_class_orders AS deliveryPlaceClassOrders,
+			t_delivery_place_class.org_no AS orgNo,
+			t_delivery_place_class.org_name AS orgName,
+			t_delivery_place_class.dept_no AS deptNo,
+			t_delivery_place_class.dept_name AS deptName
+		FROM
+			t_delivery_place_class
+		WHERE
+			t_delivery_place_class.is_deleted = #{param.deleted}
+		<if test="param.status != null and param.status != ''">
+			AND t_delivery_place_class.`status` LIKE CONCAT('%', #{param.status}, '%')
+		</if>
+		<if test="param.deliveryPlaceClassNo != null and param.deliveryPlaceClassNo != ''">
+			AND t_delivery_place_class.delivery_place_class_no LIKE CONCAT('%', #{param.deliveryPlaceClassNo}, '%')
+		</if>
+		<if test="param.deliveryPlaceClassName != null and param.deliveryPlaceClassName != ''">
+			AND t_delivery_place_class.delivery_place_class_name LIKE CONCAT('%', #{param.deliveryPlaceClassName}, '%')
+		</if>
+		<if test="param.deliveryPlaceClassOrders != null and param.deliveryPlaceClassOrders != ''">
+			AND t_delivery_place_class.delivery_place_class_orders LIKE CONCAT('%', #{param.deliveryPlaceClassOrders}, '%')
+		</if>
+		<if test="param.orgNo != null and param.orgNo != ''">
+			AND t_delivery_place_class.org_no LIKE CONCAT('%', #{param.orgNo}, '%')
+		</if>
+		<if test="param.orgName != null and param.orgName != ''">
+			AND t_delivery_place_class.org_name LIKE CONCAT('%', #{param.orgName}, '%')
+		</if>
+		<if test="param.deptNo != null and param.deptNo != ''">
+			AND t_delivery_place_class.dept_no LIKE CONCAT('%', #{param.deptNo}, '%')
+		</if>
+		<if test="param.deptName != null and param.deptName != ''">
+			AND t_delivery_place_class.dept_name LIKE CONCAT('%', #{param.deptName}, '%')
+		</if>
+		ORDER BY
+			t_delivery_place_class.delivery_place_class_orders ASC
+	</select>
+
+</mapper>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.system.SystemRoleMapper">
+
+	<!-- 分页列表，支持分页查询和高级查询  -->
+	<select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.system.SystemRolePageListVO" parameterType="map">
+		SELECT
+			t_system_role.id,
+			t_system_role.role_name AS roleName,
+			t_system_role.remark,
+			t_system_role.`status`,
+			CASE t_system_role.`status`
+			WHEN 0 THEN
+				'正常'
+			WHEN 1 THEN
+				'禁用'
+			ELSE
+				''
+			END AS statusName,
+			t_system_role.gmt_create AS gmtCreate,
+			t_system_role.gmt_modified AS gmtModified,
+			t_system_role.org_no AS orgNo,
+			t_system_role.org_name AS orgName
+		FROM
+			t_system_role
+		WHERE
+			t_system_role.is_deleted = #{param.deleted}
+		<if test="param.roleName != null and param.roleName != ''">
+			AND t_system_role.role_name LIKE CONCAT('%', #{param.roleName}, '%')
+		</if>
+		<if test="param.id != null">
+			AND t_system_role.id = #{param.id}
+		</if>
+		<if test="param.status != null">
+			AND t_system_role.status = #{param.status}
+		</if>
+		<if test="param.createBy != null and param.createBy != '' ">
+			AND t_system_role.create_by = #{param.createBy}
+		</if>
+		ORDER BY
+			t_system_role.gmt_modified DESC
+	</select>
+
+</mapper>

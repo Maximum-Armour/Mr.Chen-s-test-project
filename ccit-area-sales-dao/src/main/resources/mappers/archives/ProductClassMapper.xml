@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.archives.ProductClassMapper">
+
+	<!-- 获取各个子节点数量 -->
+	<select id="getChildrenCount" resultType="java.util.Map" parameterType="map">
+		SELECT
+			t_product_class.parent_id AS id,
+			COUNT(t_product_class.parent_id) AS count
+		FROM
+			t_product_class
+		WHERE
+			t_product_class.is_deleted = 0
+		AND
+			t_product_class.parent_id IN
+			<foreach item="id" collection="param.list" separator="," open="(" close=")" index="">
+				#{id}
+			</foreach>
+			<if test="param.notId != null and param.notId != ''">
+				AND t_product_class.id != #{param.notId}
+			</if>
+		GROUP BY
+			t_product_class.parent_id
+	</select>
+
+	<!-- 获取全部节点 -->
+	<select id="getChildrenList" resultType="com.ccit.area.sales.dao.vo.archives.ProductClassTreeVO" parameterType="map">
+		SELECT
+			t_product_class.id,
+			t_product_class.status AS status,
+			t_product_class.product_class_no AS productClassNo,
+			t_product_class.product_class_name AS productClassName,
+			t_product_class.product_class_orders AS productClassOrders,
+			t_product_class.main_or_byproduct AS mainOrByproduct,
+			t_product_class.is_whp AS isWhp,
+			t_product_class.parent_id AS parentId
+		FROM
+			t_product_class
+		WHERE
+			t_product_class.is_deleted = 0
+		  AND t_product_class.parent_id = #{parentId}
+	</select>
+
+	<!-- 获取全部节点 -->
+	<select id="getChildrenLists" resultType="com.ccit.area.sales.dao.vo.archives.ProductClassTreeVO" parameterType="map">
+		SELECT
+			t_product_class.id,
+			t_product_class.status AS status,
+			t_product_class.product_class_no AS productClassNo,
+			t_product_class.product_class_name AS productClassName,
+			t_product_class.product_class_orders AS productClassOrders,
+			t_product_class.main_or_byproduct AS mainOrByproduct,
+			t_product_class.is_whp AS isWhp,
+			t_product_class.parent_id AS parentId
+		FROM
+			t_product_class
+		WHERE
+			t_product_class.is_deleted = 0
+		  AND t_product_class.parent_id = #{parentId}
+		<if test="productClassName != null and productClassName != ''">
+			AND t_product_class.product_class_name like CONCAT('%', #{productClassName}, '%')
+		</if>
+		<if test="status != null and status != ''">
+			AND t_product_class.status = #{status}
+		</if>
+	</select>
+
+	<select id="productClassNoCount" resultType="java.lang.Long">
+		SELECT
+		    COUNT(t_product_class.product_class_no)
+		FROM
+		t_product_class
+	</select>
+
+	<update id="updateChildren">
+		UPDATE t_product_class
+		SET t_product_class.status = #{status}
+		WHERE t_product_class.parent_id = #{parentId}
+	</update>
+</mapper>

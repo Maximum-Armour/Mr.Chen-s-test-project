@@ -1,0 +1,74 @@
+#tomcat端口配置
+server:
+  port: 10020
+
+# 日志级别配置
+logging:
+  level:
+    root: info
+    com:
+      ccit:
+        javatemplate:
+          mapper: debug
+  file:
+    path: ./logs
+
+# spring配置
+spring:
+  datasource:
+    dynamic:
+      primary: master
+      strict: false
+      datasource:
+        master:
+          username: ccit_core_dev
+          password: Na9QzW^_bzDfenuB
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://172.16.192.5:3306/ccit_core_dev?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&allowPublicKeyRetrieval=true
+          type: com.zaxxer.hikari.HikariDataSource
+          hikari:
+            minimum-idle: 5
+            maximum-pool-size: 20
+            auto-commit: true
+            idle-timeout: 30000
+            pool-name: MasterHikariCP
+            max-lifetime: 1800000
+            connection-timeout: 30000
+            connection-test-query: SELECT 1
+  security:
+    enabled: false
+  jackson:
+    # 全局设置@JsonFormat的格式pattern
+    date-format: yyyy-MM-dd HH:mm:ss.SSS
+    # 当地时区
+    locale: zh
+    # 设置全局时区
+    time-zone: GMT+8
+    # ALWAYS:默认, NON_DEFAULT:属性为默认值不序列化, NON_EMPTY:属性为""或NULL不序列化, NON_NULL:属性为NULL不序列化
+    default-property-inclusion: ALWAYS
+    serialization:
+      # 返回的java.util.date转换成timestamp
+      WRITE_DATES_AS_TIMESTAMPS: false
+    deserialization:
+      # 反序列化时遇到未知属性是否引起失败
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+    generator:
+      # 给所有数字加上引号
+      WRITE_NUMBERS_AS_STRINGS: false
+  #    property-naming-strategy: CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES
+
+# mybatis-plus配置
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: com.ccit.javatemplate.model.entity
+  # 通用枚举的包路径，支持统配符 * 或者 ; 分割
+  typeEnumsPackage: com.ccit.javatemplate.common.enums
+  configuration:
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+# SpringDoc配置
+springdoc:
+  packages-to-scan: com.ccit.javatemplate.controller
+  swagger-ui:
+    disable-swagger-default-url: true

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="priceSchemeList" version="1.0">
+	<tabpanel id="entrance">
+		<gridpanel id="priceSchemeListNew" title="定价方案&lt;新增&gt;" url="/webapi/marketing/priceScheme/page/list" param="{status: '未提交'}">
+			<column label="主键ID" prop="id" xtype="numberfield" hidden="true" />
+			<column label="方案编码" prop="schemeNo" xtype="textfield" renderer="linkurl" route="priceSchemeForm" />
+			<column label="方案名称" prop="schemeName" xtype="textfield" />
+			<column label="产品分类编码" prop="productClassNo" xtype="textfield" hidden="true" />
+			<column label="产品分类名称" prop="productClassName" xtype="textfield" />
+			<column label="贸易类型" prop="tradeType" xtype="combo" comboKey="tradeType" />
+			<column label="状态" prop="status" xtype="textfield" />
+			<column label="组织编码" prop="orgNo" xtype="textfield" hidden="true" />
+			<column label="组织名称" prop="orgName" xtype="textfield" />
+			<column label="部门编码" prop="deptNo" xtype="textfield"  hidden="true" />
+			<column label="部门名称" prop="deptName" xtype="textfield" />
+			<toolbar id="priceSchemeListAddTb">
+				<button id="add" text="新增" iconCls="addButton" handler="CrrHandler" />
+				<button id="edit" text="修改" iconCls="editButton" handler="CrrHandler" />
+				<button id="delete" text="删除" iconCls="deleteButton" handler="CrrHandler" />
+				<button id="commit" text="提交" iconCls="commitButton" handler="CrrHandler" />
+			</toolbar>
+		</gridpanel>
+		<gridpanel id="priceSchemeListAudit" title="定价方案&lt;审核&gt;" url="/webapi/marketing/priceScheme/page/list" param="{status: '审核中'}">
+			<column label="主键ID" prop="id" xtype="numberfield" hidden="true" />
+			<column label="方案编码" prop="schemeNo" xtype="textfield" renderer="linkurl" route="priceSchemeForm" />
+			<column label="方案名称" prop="schemeName" xtype="textfield" />
+			<column label="产品分类编码" prop="productClassNo" xtype="textfield" hidden="true" />
+			<column label="产品分类名称" prop="productClassName" xtype="textfield" />
+			<column label="贸易类型" prop="tradeType" xtype="combo" comboKey="tradeType" />
+			<column label="组织编码" prop="orgNo" xtype="textfield" hidden="true" />
+			<column label="组织名称" prop="orgName" xtype="textfield" />
+			<column label="部门编码" prop="deptNo" xtype="textfield"  hidden="true" />
+			<column label="部门名称" prop="deptName" xtype="textfield" />
+			<toolbar id="priceSchemeListAuditTb">
+				<button id="pass" text="审核通过" iconCls="passButton" handler="CrrHandler" />
+				<button id="refuse" text="审核拒绝" iconCls="refuseButton" handler="CrrHandler" />
+			</toolbar>
+		</gridpanel>
+		<gridpanel id="priceSchemeList" title="定价方案&lt;查询&gt;" url="/webapi/marketing/priceScheme/page/list">
+			<column label="主键ID" prop="id" xtype="numberfield" hidden="true" />
+			<column label="方案编码" prop="schemeNo" xtype="textfield" renderer="linkurl" route="priceSchemeForm" />
+			<column label="方案名称" prop="schemeName" xtype="textfield" />
+			<column label="产品分类编码" prop="productClassNo" xtype="textfield" hidden="true" />
+			<column label="产品分类名称" prop="productClassName" xtype="textfield" />
+			<column label="贸易类型" prop="tradeType" xtype="combo" comboKey="tradeType" />
+			<column label="组织编码" prop="orgNo" xtype="textfield" hidden="true" />
+			<column label="组织名称" prop="orgName" xtype="textfield" />
+			<column label="部门编码" prop="deptNo" xtype="textfield"  hidden="true" />
+			<column label="部门名称" prop="deptName" xtype="textfield" />
+		</gridpanel>
+	</tabpanel>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 新增事件
+			if (t.id == "add") {
+				var data = {prefixTitle: "新增"};
+				handleRoute("priceSchemeForm", data);
+			}
+			// 修改事件
+			if (t.id == "edit") {
+				var records = Ext.getCmp("priceSchemeListNew").getSelectionModel().getSelection();
+				if (records.length != 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行修改!");
+					return false;
+				}
+				var data = {id: records[0].id, prefixTitle: "修改"};
+				handleRoute("priceSchemeForm", data);
+			}
+			// 删除事件
+			if (t.id == "delete") {
+				var records = Ext.getCmp("priceSchemeListNew").getSelectionModel().getSelection();
+				if (records.length < 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行删除!");
+					return false;
+				}
+				handleDelConfirm("/webapi/archives/deliveryPlace/delete", records, Ext.getCmp("priceSchemeListNew"));
+			}
+			// 提交事件
+			if (t.id == "commit") {
+			}
+			// 审核通过事件
+			if (t.id == "pass") {
+			}
+			// 审核拒绝事件
+			if (t.id == "refuse") {
+			}
+		}
+	]]></script>
+</page>

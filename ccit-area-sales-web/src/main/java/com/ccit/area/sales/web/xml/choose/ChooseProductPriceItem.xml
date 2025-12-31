@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="chooseProductPriceItem" version="1.0">
+	<window id="productPriceItemWin" title="选择产品定价明细" autoScroll="true">
+		<gridpanel id="productPriceItem" url="/webapi/marketing/productPrice/item/page/list" editor="true" param="{status: '审核完成', gtToday: true}">
+			<column label="主键ID" prop="id" xtype="textfield" hidden="true" />
+			<column label="挂牌模型" prop="listedMode" xtype="combo" comboKey="listedMode" allowBlank="false" />
+			<column label="有效开始时间" prop="effectiveStartTime" xtype="datetimefield" readOnly="true" />
+			<column label="有效结束时间" prop="effectiveEndTime" xtype="datetimefield" readOnly="true" />
+			<column label="产品定价编码" prop="productPriceNo" xtype="textfield" width="170" readOnly="true" />
+			<column label="产品定价明细编码" prop="productPriceItemNo" xtype="textfield" width="170" readOnly="true" />
+			<column label="产品分类编码" prop="productClassNo" xtype="textfield" hidden="true" readOnly="true" />
+			<column label="产品分类名称" prop="productClassName" xtype="textfield" readOnly="true" />
+			<column label="牌号编码" prop="skuNo" xtype="textfield" hidden="true" readOnly="true" />
+			<column label="牌号名称" prop="skuName" xtype="textfield" readOnly="true" />
+			<column label="产品编码" prop="materielNo" xtype="textfield" hidden="true" readOnly="true" />
+			<column label="产品名称" prop="materielName" xtype="textfield" readOnly="true" />
+			<column label="币种" prop="currency" xtype="combo" comboKey="currency" readOnly="true" />
+			<column label="贸易类型" prop="tradeType" xtype="combo" comboKey="tradeType" readOnly="true" />
+			<column label="区域编码" prop="areaNo" xtype="textfield" hidden="true" readOnly="true" />
+			<column label="区域名称" prop="areaName" xtype="textfield" readOnly="true" />
+			<column label="提货地编码" prop="deliveryPlaceNo" xtype="textfield" hidden="true" readOnly="true" />
+			<column label="提货地名称" prop="deliveryPlaceName" xtype="textfield" readOnly="true" />
+			<column label="提货地分类编码" prop="deliveryPlaceClassNo" xtype="textfield" hidden="true" readOnly="true" />
+			<column label="提货地分类名称" prop="deliveryPlaceClassName" xtype="textfield" readOnly="true" />
+			<column label="配送方式" prop="distributionWay" xtype="combo" comboKey="psfs" readOnly="true" />
+			<column label="运输方式" prop="transportWay" xtype="combo" comboKey="ysfs" readOnly="true" />
+			<column label="不含税单价" prop="price" xtype="textfield" readOnly="true" />
+			<column label="含税单价" prop="taxPrice" xtype="textfield" readOnly="true" />
+			<column label="仓库编码" prop="depotNo" xtype="textfield" hidden="true" readOnly="true" />
+			<column label="仓库名称" prop="depotName" xtype="textfield" readOnly="true" />
+			<column label="对标价格" prop="benchmarkPrice" xtype="textfield" readOnly="true" />
+			<column label="单价单位" prop="currencyUnit" xtype="combo" comboKey="priceUnit" readOnly="true" />
+			<column label="描述" prop="remark" xtype="textfield" readOnly="true" />
+		</gridpanel>
+		<button id="productPriceItemVerify" text="确定" iconCls="commitButton" handler="CrrHandler" callback="confirm" />
+	</window>
+	<script id="script"><![CDATA[
+		// 触发事件
+		function CrrHandler(t) {
+			// 确定事件
+			if (t.id == "productPriceItemVerify") {
+				var records = Ext.getCmp("productPriceItem").getSelectionModel().getSelection();
+				if (records.length < 1) {
+					Ext.MessageBox.alert("提示", "请选择一行进行确认!");
+					return false;
+				}
+				var url = "/webapi/marketing/listed/add";
+				var data = {
+					nodeList: records.map(obj => ({
+						id: obj.data.id,
+						listedMode: obj.data.listedMode
+					}))
+				}
+				post(url, data, function(res) {
+					Ext.MessageBox.alert("提示", res.msg);
+					if (t.callback != "") {
+						Ext.getCmp(t.callback).getStore().load();
+					}
+					productPriceItemWin.close();
+				});
+			}
+		}
+	]]></script>
+</page>

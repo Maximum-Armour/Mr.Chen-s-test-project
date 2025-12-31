@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.sales.QuantityManagementMapper">
+
+    <select id="selectBiddingPageList" resultType="com.ccit.area.sales.dao.vo.sales.WeightPageListVO"
+            parameterType="map">
+        SELECT
+        t_sales_bidding.id,
+        t_sales_bidding.tender_number AS listedNo,
+        t_sales_bidding.delivery_method AS distributionWay,
+        COALESCE(COUNT(CASE WHEN t_price_bidding.win_bid_status = '已中标' THEN 1 ELSE NULL END),0) AS
+        pendingOrderAllocation,
+        COALESCE(COUNT(CASE WHEN t_price_bidding.win_bid_status != '已中标' THEN 1 ELSE NULL END),0) AS assignedOrders,
+        t_sales_bidding.shipping_type AS transportWay,
+        t_sales_bidding.payment_method AS payWay,
+        t_sales_bidding.currency,
+        t_sales_bidding.area_no AS areaNo,
+        t_sales_bidding.area_name AS areaName,
+        t_sales_bidding.delivery_place_no AS deliveryPlaceNo,
+        t_sales_bidding.delivery_place_name AS deliveryPlaceName,
+        t_sales_bidding.delivery_place_class_no AS deliveryPlaceClassNo,
+        t_sales_bidding.delivery_place_class_name AS deliveryPlaceClassName,
+        t_sales_bidding.product_class_no AS productClassNo,
+        t_sales_bidding.product_class_name AS productClassName,
+        t_sales_bidding.sku_no AS skuNo,
+        t_sales_bidding.sku_name AS skuName,
+        t_sales_bidding.materiel_no AS materielNo,
+        t_sales_bidding.materiel_name AS materielName,
+        t_sales_bidding.org_no AS orgNo,
+        t_sales_bidding.org_name AS orgName,
+        t_sales_bidding.gmt_create AS gmtCreate
+        FROM t_sales_bidding
+        LEFT JOIN t_price_bidding
+        ON t_sales_bidding.tender_number = t_price_bidding.tender_number
+        WHERE
+        t_sales_bidding.is_deleted = #{param.deleted}
+        <if test="param.orgNoList != null || param.orgNoList != ''">
+            AND t_sales_bidding.org_no IN
+            <foreach item="item" index="index" collection="param.orgNoList"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        AND t_sales_bidding.order_bidding_no IS NOT NULL
+        GROUP BY
+        t_sales_bidding.id,
+        t_sales_bidding.tender_number,
+        t_sales_bidding.delivery_method,
+        t_sales_bidding.shipping_type,
+        t_sales_bidding.payment_method,
+        t_sales_bidding.currency,
+        t_sales_bidding.area_no,
+        t_sales_bidding.area_name,
+        t_sales_bidding.delivery_place_no,
+        t_sales_bidding.delivery_place_name,
+        t_sales_bidding.delivery_place_class_no,
+        t_sales_bidding.delivery_place_class_name,
+        t_sales_bidding.product_class_no,
+        t_sales_bidding.product_class_name,
+        t_sales_bidding.sku_no,
+        t_sales_bidding.sku_name,
+        t_sales_bidding.materiel_no,
+        t_sales_bidding.materiel_name,
+        t_sales_bidding.org_no,
+        t_sales_bidding.org_name,
+        t_sales_bidding.gmt_create;
+    </select>
+
+    <select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.sales.WeightPageListVO" parameterType="map">
+        SELECT
+        t_listed.id,
+        COALESCE(COUNT(CASE WHEN t_order_line.status = '待审核' THEN 1 ELSE NULL END), 0) AS pendingOrderAllocation,
+        COALESCE(COUNT(CASE WHEN t_order_line.status != '待审核' THEN 1 ELSE NULL END), 0) AS assignedOrders,
+        t_listed.status,
+        t_listed.listed_no AS listedNo,
+        t_listed.listed_mode AS listedMode,
+        t_listed.listed_price AS listedPrice,
+        t_listed.listed_tax_price AS listedTaxPrice,
+        t_listed.benchmark_price AS benchmarkPrice,
+        t_listed.price_model AS priceModel,
+        t_listed.use_status AS useStatus,
+        t_listed.distribution_way AS distributionWay,
+        t_listed.transport_way AS transportWay,
+        t_listed.pay_way AS payWay,
+        t_listed.effective_start_time AS effectiveStartTime,
+        t_listed.effective_end_time AS effectiveEndTime,
+        t_listed.currency,
+        t_listed.trade_type AS tradeType,
+        t_listed.unit,
+        t_listed.unit_weight AS unitWeight,
+        t_listed.area_no AS areaNo,
+        t_listed.area_name AS areaName,
+        t_listed.delivery_place_no AS deliveryPlaceNo,
+        t_listed.delivery_place_name AS deliveryPlaceName,
+        t_listed.delivery_place_class_no AS deliveryPlaceClassNo,
+        t_listed.delivery_place_class_name AS deliveryPlaceClassName,
+        t_listed.product_class_no AS productClassNo,
+        t_listed.product_class_name AS productClassName,
+        t_listed.sku_no AS skuNo,
+        t_listed.sku_name AS skuName,
+        t_listed.materiel_no AS materielNo,
+        t_listed.materiel_name AS materielName,
+        t_listed.org_no AS orgNo,
+        t_listed.org_name AS orgName,
+        t_listed.gmt_create AS gmtCreate
+        FROM
+        t_listed
+        LEFT JOIN t_order_line ON t_listed.listed_no = t_order_line.listed_no
+        WHERE
+        t_listed.is_deleted = #{param.deleted}
+        <if test="param.orgNoList != null || param.orgNoList != ''">
+            AND t_listed.org_no IN
+            <foreach item="item" index="index" collection="param.orgNoList"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY
+        t_listed.id, t_listed.status, t_listed.listed_no,
+        t_listed.listed_mode, t_listed.listed_price, t_listed.listed_tax_price,
+        t_listed.benchmark_price, t_listed.price_model, t_listed.use_status,
+        t_listed.distribution_way, t_listed.transport_way, t_listed.pay_way,
+        t_listed.effective_start_time, t_listed.effective_end_time, t_listed.currency,
+        t_listed.trade_type, t_listed.unit, t_listed.unit_weight, t_listed.area_no,
+        t_listed.area_name, t_listed.delivery_place_no, t_listed.delivery_place_name,
+        t_listed.delivery_place_class_no, t_listed.delivery_place_class_name,
+        t_listed.product_class_no, t_listed.product_class_name, t_listed.sku_no,
+        t_listed.sku_name, t_listed.materiel_no, t_listed.materiel_name, t_listed.org_no,
+        t_listed.org_name, t_listed.gmt_create
+        ORDER BY
+        t_listed.gmt_create DESC
+    </select>
+
+
+    <select id="selectlist" resultType="com.ccit.area.sales.dao.vo.sales.WeightPageListVO" parameterType="map">
+        SELECT id,
+               status,
+               listed_no,
+               listed_mode,
+               listed_price,
+               listed_tax_price,
+               benchmark_price,
+               price_model,
+               use_status,
+               distribution_way,
+               transport_way,
+               pay_way,
+               effective_start_time,
+               effective_end_time,
+               currency,
+               trade_type,
+               unit,
+               unit_weight,
+               area_no,
+               area_name,
+               delivery_place_no,
+               delivery_place_name,
+               delivery_place_class_no,
+               delivery_place_class_name,
+               product_class_no,
+               product_class_name,
+               sku_no,
+               sku_name,
+               materiel_no,
+               materiel_name,
+               remark,
+               workflowid,
+               shbz,
+               org_no,
+               org_name,
+               depot_no,
+               depot_name,
+               company_no,
+               company_name,
+               create_by,
+               create_by_name,
+               gmt_create,
+               update_by,
+               update_by_name,
+               gmt_modified,
+               is_deleted AS deleted,
+               deleted_by,
+               deleted_by_name,
+               deleted_time,
+               tfvisuat,
+               tfvisible,
+               listed_amount
+        FROM t_listed
+        WHERE id = #{id}
+    </select>
+
+
+</mapper>

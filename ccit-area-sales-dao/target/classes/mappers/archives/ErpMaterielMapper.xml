@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccit.area.sales.dao.mapper.archives.ErpMaterielMapper">
+
+	<!-- 分页列表，支持分页查询和高级查询  -->
+	<select id="selectPageList" resultType="com.ccit.area.sales.dao.vo.archives.ErpMaterielPageListVO" parameterType="map">
+		SELECT
+			t_erp_materiel.id,
+			t_erp_materiel.erp_materiel_showdesc AS erpMaterielShowdesc,
+			t_erp_materiel.erp_materiel_no AS erpMaterielNo,
+			t_erp_materiel.erp_materiel_name AS erpMaterielName,
+			t_erp_materiel.product_class_no AS productClassNo,
+			t_erp_materiel.product_class_name AS productClassName,
+			t_erp_materiel.unit
+		FROM
+			t_erp_materiel
+		WHERE
+			t_erp_materiel.is_deleted = #{param.deleted}
+		<if test="param.erpMaterielShowdesc != null and param.erpMaterielShowdesc != ''">
+			AND t_erp_materiel.erp_materiel_showdesc LIKE CONCAT('%', #{param.erpMaterielShowdesc}, '%')
+		</if>
+		<if test="param.erpMaterielNo != null and param.erpMaterielNo != ''">
+			AND t_erp_materiel.erp_materiel_no LIKE CONCAT('%', #{param.erpMaterielNo}, '%')
+		</if>
+		<if test="param.erpMaterielName != null and param.erpMaterielName != ''">
+			AND t_erp_materiel.erp_materiel_name LIKE CONCAT('%', #{param.erpMaterielName}, '%')
+		</if>
+		ORDER BY
+			t_erp_materiel.gmt_modified DESC
+	</select>
+
+</mapper>

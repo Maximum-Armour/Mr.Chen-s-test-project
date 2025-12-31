@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.ccit</groupId>
+		<artifactId>ccit-area-sales</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>ccit-area-sales-web</artifactId>
+
+
+
+	<dependencies>
+		<dependency>
+			<groupId>com.ccit</groupId>
+			<artifactId>ccit-area-sales-service</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ccit</groupId>
+			<artifactId>ccit-area-sales-openapi</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<!-- 开启Spring Cloud 应用程序启动时加载bootstrap配置文件 -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bootstrap</artifactId>
+			<version>3.1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+			<version>2021.0.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+			<version>2021.0.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+        </dependency>
+        <dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>
+		<dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-devtools</artifactId>
+	        <scope>runtime</scope>
+	        <optional>true</optional>
+	    </dependency>
+
+		<!--spring-kafka-->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+
+<!--		<dependency>-->
+<!--			<groupId>com.rabbitmq</groupId>-->
+<!--			<artifactId>amqp-client</artifactId>-->
+<!--			<version>5.6.0</version>-->
+<!--		</dependency>-->
+
+
+
+
+	</dependencies>
+
+	<build>
+		<finalName>${project.artifactId}-1.0-SNAPSHOT</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.3.2.RELEASE</version>
+				<configuration>
+					<mainClass>com.ccit.area.sales.web.WebApplication</mainClass>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-archetype-plugin</artifactId>
+				<version>3.1.2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.2</version>
+				<configuration>
+					<skipTests>false</skipTests>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<source>11</source>
+					<target>11</target>
+					<compilerArgs>
+						<arg>-Xlint:deprecation</arg>
+						<arg>-Xlint:unchecked</arg>
+					</compilerArgs>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>1.18.22</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+
+
+			<!-- BEGIN MODIFICATION -->
+			<!-- 配置 maven-resources-plugin 插件，确保二进制文件（如 .docx, .xlsx 等）不会被错误地编码或过滤 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<nonFilteredFileExtensions>
+						<!-- 指定不需编码的文件扩展名，避免构建过程中对这些文件进行不必要的修改 -->
+						<nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
+						<nonFilteredFileExtension>xls</nonFilteredFileExtension>
+						<nonFilteredFileExtension>docx</nonFilteredFileExtension>
+						<nonFilteredFileExtension>doc</nonFilteredFileExtension>
+					</nonFilteredFileExtensions>
+				</configuration>
+			</plugin>
+			<!-- END MODIFICATION -->
+
+
+		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/webapp</directory>
+				<targetPath>META-INF/resources</targetPath>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+	</build>
+
+</project>
